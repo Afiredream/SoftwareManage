@@ -1,0 +1,3 @@
+#!/bin/ash
+export HOME="$ROOT/数据"
+exec "$@"

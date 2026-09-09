@@ -1,0 +1,32 @@
+
+软件名称=微信
+软件版本=2026.09.09
+
+运行方式=exec
+运行路径=容器/opt/wechat/wechat
+
+运行环境() {
+  ;
+}
+
+文件检查() {
+  [[ -d "$ROOT/容器" ]] || return 1
+  return 1
+}
+
+配置部署() {
+
+  文件链接="https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb"
+  文件名称="$(basename "${文件链接}")"
+  mkdir --parents "$ROOT/临时"
+  cd "$ROOT/临时"
+  [[ -f "$ROOT/临时/${文件名称}" ]] || wget --output-document="${文件名称}" "${文件链接}"
+  if [[ ! -d "$ROOT/容器" ]];then
+    ar x "${文件名称}"
+    mkdir --parents "$ROOT/容器"
+    rm --force control.tar.xz
+    rm --force debian-binary
+    tar --extract --file "data.tar.xz" --directory "$ROOT/容器"
+    rm --force data.tar.xz
+  fi
+}
