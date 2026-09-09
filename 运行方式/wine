@@ -1,0 +1,36 @@
+#!/bin/dash
+
+User='Public'
+WinePrefix="$ROOT/容器"
+WinDrive="$WinePrefix/drive_c"
+UserProfile="$WinDrive/users/$User"
+
+mkdir --parents "$ROOT/容器"
+mkdir --parents "$ROOT/数据"
+
+mkdir --parents "$ROOT/数据/Music"
+mkdir --parents "$ROOT/数据/Videos"
+mkdir --parents "$ROOT/数据/Pictures"
+mkdir --parents "$ROOT/数据/Downloads"
+mkdir --parents "$ROOT/数据/Documents"
+
+mkdir --parents "$ROOT/数据/Links"
+mkdir --parents "$ROOT/数据/Contacts"
+mkdir --parents "$ROOT/数据/Searches"
+mkdir --parents "$ROOT/数据/Favorites"
+mkdir --parents "$ROOT/数据/Saved Games"
+
+mkdir --parents "$ROOT/数据/AppData"
+mkdir --parents "$ROOT/数据/AppData/Local"
+mkdir --parents "$ROOT/数据/AppData/Roaming"
+mkdir --parents "$ROOT/数据/AppData/LocalLow"
+
+ln --symbolic --force --relative --no-dereference "$WinDrive" "$ROOT/磁盘"
+ln --symbolic --force --relative --no-dereference "$ROOT/数据" "$UserProfile" 
+ln --symbolic --force --relative --no-dereference "$ROOT/数据/Desktop" "$ROOT/桌面"
+
+export USER="$User"
+export WINEPREFIX="$WinePrefix"
+export WINEDLLOVERRIDES="winemenubuilder.exe=d"
+
+exec wine "$@"
