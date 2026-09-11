@@ -1,0 +1,12 @@
+
+软件名称=htmlq
+软件版本=0.4.0
+
+typeset -A 资源链接
+资源链接[htmlq.tar.gz]=https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-linux.tar.gz
+终端命令=(htmlq)
+
+配置部署() {
+  mkdir --parents "$ROOT/运行"
+  tar --extract --file htmlq.tar.gz --directory "$ROOT/运行"
+}
