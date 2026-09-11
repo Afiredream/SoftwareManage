@@ -15,7 +15,7 @@ export PATH="$HOME/软件/软件运行:$PATH"
 
 
 cd "${起始路径}"
-git fetch --all
+# git fetch --all
 
 if [[ "${运行命令}" == "运行" ]];then
     
