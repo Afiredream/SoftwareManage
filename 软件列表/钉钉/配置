@@ -1,0 +1,63 @@
+
+软件名称=钉钉
+运行方式=exec
+运行路径=容器/opt/apps/com.alibabainc.dingtalk/files/8.2.8-Release.260818002/com.alibabainc.dingtalk
+图标路径=容器/opt/apps/com.alibabainc.dingtalk/files/logo.ico
+运行依赖=(patchelf)
+
+运行环境() {
+  cd "${容器目录}/opt/apps/com.alibabainc.dingtalk/files/8.2.8-Release.260818002"
+  export LD_LIBRARY_PATH=/lib
+}
+
+更新检查() {
+
+  索引链接="https://www.dingtalk.com/win/d/qd=linux_amd64"
+  索引信息="$(curl --max-redirs 0 --silent --dump-header - "${索引链接}")"
+  文件链接="$(sed --quiet 's/^location: //p' <<< "${索引信息}")"
+  文件名称="$(basename "${文件链接}"| tr --delete '\r')"
+
+  网络版本="$(cut -d '_' -f 2 <<< "${文件名称}")"
+  本地版本="$(jq --raw-output '.version' "${容器目录}/opt/apps/com.alibabainc.dingtalk/info")"
+
+  [[ -z "${本地版本}" ]] && return
+  [[ -z "${网络版本}" ]] && return
+  if [[ "${本地版本}" != "${网络版本}" ]];then
+    rm --recursive --force "${临时目录}"
+    配置部署
+  fi
+
+}
+
+配置部署() {
+
+  文件名称="com.alibabainc.dingtalk.deb"
+  文件链接="https://www.dingtalk.com/win/d/qd=linux_amd64"
+
+  mkdir --parents "${临时目录}"
+  mkdir --parents "${容器目录}"
+  
+  if [[ ! -f "${临时目录}/${文件名称}" ]];then
+    cd "${临时目录}"
+    wget --output-document="${文件名称}" "${文件链接}"
+    ar x "${文件名称}"
+    tar --extract --file data.tar.xz --directory "${容器目录}"
+    tar --extract --file control.tar.xz --directory "${容器目录}"
+    execstack -c "${文件目录}/dingtalk_dll.so"
+    rm --force data.tar.xz
+    rm --force debian-binary
+    rm --force control.tar.xz
+  fi
+
+  if [[ ! -f "${软件目录}/${运行路径}" ]];then
+    cd "${临时目录}"
+    ar x "${文件名称}"
+    tar --extract --file data.tar.xz --directory "${容器目录}"
+    tar --extract --file control.tar.xz --directory "${容器目录}"
+    patchelf --clear-execstack "${容器目录}/opt/apps/com.alibabainc.dingtalk/files/8.2.8-Release.260818002/dingtalk_dll.so"
+    rm --force data.tar.xz
+    rm --force debian-binary
+    rm --force control.tar.xz
+  fi
+
+}

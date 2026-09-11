@@ -1,32 +1,50 @@
 
 软件名称=微信
-软件版本=2026.09.09
-
 运行方式=exec
 运行路径=容器/opt/wechat/wechat
+图标路径=容器/usr/share/icons/hicolor/256x256/apps/wechat.png
+运行依赖=(htmlq)
 
 运行环境() {
   ;
 }
 
-文件检查() {
-  [[ -d "$ROOT/容器" ]] || return 1
-  return 1
+更新检查() {
+
+  cd "${容器目录}"
+  [[ -f control ]] || return
+
+  本地版本="$(sed -n 's/^Version: //p' control)"
+  网页代码="$(curl --silent "https://linux.weixin.qq.com/")"
+  网络版本="$(htmlq --text  "div.main-section__bd-version" <<< "${网页代码}")"
+
+  [[ -z "${本地版本}" ]] && return
+  [[ -z "${网络版本}" ]] && return
+
+  if [[ "${本地版本}" != *"${网络版本}"* ]];then
+    rm --recursive --force "${临时目录}"
+    配置部署
+  fi
+
 }
 
 配置部署() {
 
+  文件名称="WeChatLinux.deb"
   文件链接="https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb"
-  文件名称="$(basename "${文件链接}")"
-  mkdir --parents "$ROOT/临时"
-  cd "$ROOT/临时"
-  [[ -f "$ROOT/临时/${文件名称}" ]] || wget --output-document="${文件名称}" "${文件链接}"
-  if [[ ! -d "$ROOT/容器" ]];then
+
+  mkdir --parents "${临时目录}"
+  mkdir --parents "${容器目录}"
+  
+  if [[ ! -f "${临时目录}/${文件名称}" ]];then
+    cd "${临时目录}"
+    wget --output-document="${文件名称}" "${文件链接}"
     ar x "${文件名称}"
-    mkdir --parents "$ROOT/容器"
-    rm --force control.tar.xz
-    rm --force debian-binary
-    tar --extract --file "data.tar.xz" --directory "$ROOT/容器"
+    tar --extract --file data.tar.xz --directory "${容器目录}"
+    tar --extract --file control.tar.xz --directory "${容器目录}"
     rm --force data.tar.xz
+    rm --force debian-binary
+    rm --force control.tar.xz
   fi
+
 }
