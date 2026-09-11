@@ -1,1 +1,11 @@
-#!/bin/dash
+#!/bin/sh
+
+[ -e "$HOME/软件" ] && { echo 目录存在无法安装:$HOME/软件;exit; }
+
+mkdir --parents "$HOME/软件"
+mkdir --parents "$HOME/软件/软件运行"
+mkdir --parents "$HOME/软件/软件仓库"
+mkdir --parents "$HOME/软件/软件管理"
+
+cp --recursive --force "$(dirname "$0")/." "$HOME/软件/软件管理"
+ln --symbolic --force --relative "$HOME/软件/软件管理/软件管理" "$HOME/软件/软件运行/软件管理"
