@@ -1,0 +1,48 @@
+
+软件名称=WorkBuddy
+软件版本=
+运行方式=exec
+运行路径=容器/opt/WorkBuddy/workbuddy
+图标路径=容器/usr/share/icons/hicolor/512x512/apps/workbuddy.png
+运行依赖=
+
+运行环境() {
+  export QT_IM_MODULE=fcitx
+  export GTK_IM_MODULE=fcitx
+  export XMODIFIERS=@im=fcitx
+}
+
+更新检查() {
+  ;
+}
+
+配置部署() {
+
+  文件名称="WorkBuddy.deb"
+  文件链接="https://download.codebuddy.cn/workbuddy/saas/linux-x64-deb/WorkBuddy-linux-x64-deb-5.5.4.38151288-1ca4889a.deb"
+
+  mkdir --parents "${临时目录}"
+  mkdir --parents "${容器目录}"
+  
+  if [[ ! -f "${临时目录}/${文件名称}" ]];then
+    cd "${临时目录}"
+    wget --output-document="${文件名称}" "${文件链接}"
+    ar x "${文件名称}"
+    tar --extract --file data.tar.xz --directory "${容器目录}"
+    tar --extract --file control.tar.* --directory "${容器目录}"
+    rm --force data.tar.xz
+    rm --force debian-binary
+    rm --force control.tar.*
+  fi
+
+  if [[ ! -f "${软件目录}/${运行路径}" ]];then
+    cd "${临时目录}"
+    ar x "${文件名称}"
+    tar --extract --file data.tar.xz --directory "${容器目录}"
+    tar --extract --file control.tar.* --directory "${容器目录}"
+    rm --force data.tar.xz
+    rm --force debian-binary
+    rm --force control.tar.*
+  fi
+
+}

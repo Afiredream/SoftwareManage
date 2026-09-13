@@ -1,0 +1,13 @@
+
+软件名称=jq
+软件版本=1.8.2
+
+typeset -A 资源链接
+资源链接[jq]=https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux64
+终端命令=(jq)
+
+配置部署() {
+  mkdir --parents "$ROOT/运行"
+  mv --force "$ROOT/临时/jq" "$ROOT/运行/jq"
+  chmod +x "$ROOT/运行/jq"
+}

@@ -1,0 +1,20 @@
+
+软件名称=jo
+软件版本=1.9
+
+typeset -A 资源链接
+资源链接[jo.tar.gz]=https://github.com/jpmens/jo/releases/download/1.9/jo-1.9.tar.gz
+终端命令=(jo)
+
+配置部署() {
+  cd "$ROOT/临时"
+  mkdir --parents "$ROOT/代码"
+  tar --extract --file jo.tar.gz --directory "$ROOT/代码" 
+  cd "$ROOT/代码/jo-${软件版本}"
+  ./configure --prefix=/
+  make
+  mkdir --parents "$ROOT/容器"
+  make install DESTDIR="$ROOT/容器"
+  rm --recursive --force "$ROOT/代码"
+  ln --symbolic --force --relative --no-dereference "$ROOT/容器/bin" "$ROOT/运行"
+}

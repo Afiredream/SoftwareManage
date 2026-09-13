@@ -6,6 +6,11 @@
 运行依赖=(patchelf)
 
 运行环境() {
+
+  export QT_IM_MODULE=fcitx
+  export GTK_IM_MODULE=fcitx
+  export XMODIFIERS=@im=fcitx
+
   cd "${容器目录}/opt/apps/com.alibabainc.dingtalk/files/8.2.8-Release.260818002"
   export LD_LIBRARY_PATH=/lib
 }

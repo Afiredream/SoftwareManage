@@ -1,0 +1,13 @@
+
+软件名称=jless
+软件版本=0.9.0
+
+typeset -A 资源链接
+资源链接[jless.zip]=https://github.com/PaulJuliusMartinez/jless/releases/download/v0.9.0/jless-v0.9.0-x86_64-unknown-linux-gnu.zip
+终端命令=(jless)
+软件依赖=(unzip)
+
+配置部署() {
+  mkdir --parents "$ROOT/运行"
+  unzip jless.zip -d "$ROOT/运行"
+}
