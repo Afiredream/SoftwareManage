@@ -1,3 +1,4 @@
+#!/bin/ksh
 
 软件名称=jq
 软件版本=1.8.2
@@ -7,7 +8,8 @@ typeset -A 资源链接
 终端命令=(jq)
 
 配置部署() {
+  cd "$ROOT/临时"
+  chmod +x jq
   mkdir --parents "$ROOT/运行"
-  mv --force "$ROOT/临时/jq" "$ROOT/运行/jq"
-  chmod +x "$ROOT/运行/jq"
+  mv --force jq "$ROOT/运行/jq"
 }

@@ -1,3 +1,4 @@
+#!/bin/ksh
 
 软件名称=basel
 软件版本=3.11.2
@@ -7,7 +8,9 @@ typeset -A 资源链接
 终端命令=(basel)
 
 配置部署() {
+  cd "$ROOT/临时"
+  chmod +x basel
   mkdir --parents "$ROOT/运行"
-  mv --force "$ROOT/临时/basel" "$ROOT/运行/basel"
-  chmod +x "$ROOT/运行/basel"
+  mv --force basel "$ROOT/运行/basel"
+
 }

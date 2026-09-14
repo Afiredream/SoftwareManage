@@ -1,0 +1,38 @@
+#!/bin/ksh
+
+软件名称=dolphin
+软件版本=26.08.1
+
+typeset -A 资源链接
+资源链接[dolphin.tar]=https://invent.kde.org/system/dolphin/-/archive/v26.08.1/dolphin-v26.08.1.tar
+终端命令=(dolphin)
+
+配置部署() {
+
+cd "$ROOT/临时"
+
+mkdir --parents "$ROOT/代码"
+mkdir --parents "$ROOT/容器"
+mkdir --parents "$ROOT/运行"
+
+tar --extract --file dolphin.tar --directory "$ROOT/代码" 
+cd "$ROOT/代码/dolphin-v${软件版本}"
+cmake . -DCMAKE_BUILD_TYPE=Release
+make
+make install DESTDIR="$ROOT/容器"
+rm --recursive --force "$ROOT/代码"
+
+cd "$ROOT/运行"
+
+cat > dolphin << EOF
+#!/bin/dash
+ROOT="$(realpath "$0")"
+ROOT="$(dirname "$ROOT")"
+ROOT="$(dirname "$ROOT")"
+export HOME="/home"
+export LD_LIBRARY_PATH="$ROOT/容器/usr/lib"
+exec "$ROOT/容器/usr/bin/dolphin" "$@"
+EOF
+chmod +x dolphin
+
+}

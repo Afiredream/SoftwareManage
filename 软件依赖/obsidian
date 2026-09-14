@@ -1,0 +1,43 @@
+#!/bin/ksh
+
+软件名称=obsidian
+软件版本=1.13.7
+
+typeset -A 资源链接
+资源链接[obsidian.deb]=https://github.com/obsidianmd/obsidian-releases/releases/download/v1.13.7/obsidian_1.13.7_amd64.deb
+终端命令=(obsidian)
+运行依赖=(jo)
+
+配置部署() {
+
+cd "$ROOT/临时"
+
+mkdir --parents "$ROOT/容器"
+mkdir --parents "$ROOT/运行"
+mkdir --parents "$ROOT/数据"
+
+ar x obsidian.deb
+tar --extract --file data.tar.* --directory "$ROOT/容器"
+
+rm --force data.tar.*
+rm --force control.tar.*
+rm --force debian-binary
+
+cd "$ROOT/运行"
+
+cat > obsidian <<'EOF'
+#!/bin/dash
+ROOT="$(realpath "$0")"
+ROOT="$(dirname "$ROOT")"
+ROOT="$(dirname "$ROOT")"
+export HOME="$ROOT/数据"
+JSON='{vaults:{"":{"path":$BASE,"open":true, "ts":""}}}'
+JSON="$(jq --null-input --arg BASE "$HOME/obsidian" "$JSON")"
+echo $JSON > "$HOME/.config/obsidian/obsidian.json"
+exec "$ROOT/容器/opt/Obsidian/obsidian" "$@"
+EOF
+
+chmod +x obsidian
+mkdir --parents "$ROOT/数据/.config/obsidian"
+
+}

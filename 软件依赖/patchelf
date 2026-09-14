@@ -1,3 +1,4 @@
+#!/bin/ksh
 
 软件名称=patchelf
 软件版本=0.19.1
@@ -7,6 +8,7 @@ typeset -A 资源链接
 终端命令=(patchelf)
 
 配置部署() {
+  cd "$ROOT/临时"
   mkdir --parents "$ROOT/容器"
   tar --extract --file patchelf.tar.gz --directory "$ROOT/容器"
   ln --symbolic --force --relative --no-dereference "$ROOT/容器/bin" "$ROOT/运行"
