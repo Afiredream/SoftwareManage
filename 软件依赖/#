@@ -8,6 +8,9 @@ typeset -A 资源链接
 终端命令=()
 
 配置部署() {
-  cd "$ROOT/临时"
+
+cd "$ROOT"
+
+cd "$ROOT/临时"
 
 }

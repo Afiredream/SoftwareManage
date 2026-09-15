@@ -6,13 +6,16 @@
 typeset -A 资源链接
 资源链接[htmlq.tar.gz]=https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-linux.tar.gz
 终端命令=(htmlq)
+typeset -A 运行路径
+运行路径[htmlq]=软件/htmlq
 
 配置部署() {
 
-cd "$ROOT/临时"
-mkdir --parents "$ROOT/容器"
+cd "$ROOT"
+mkdir --parents 软件
+rm --recursive --force 容器
 
-mkdir --parents "$ROOT/容器/bin"
-tar --extract --file htmlq.tar.gz --directory "$ROOT/容器/bin"
+cd "$ROOT/临时"
+tar --extract --file htmlq.tar.gz --directory "$ROOT/软件"
 
 }

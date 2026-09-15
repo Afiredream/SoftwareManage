@@ -6,14 +6,16 @@
 typeset -A 资源链接
 资源链接[gron.tgz]=https://github.com/tomnomnom/gron/releases/download/v0.7.1/gron-linux-amd64-0.7.1.tgz
 终端命令=(gron)
+typeset -A 运行路径
+运行路径[gron]=软件/gron
 
 配置部署() {
 
+cd "$ROOT"
+mkdir --parents 软件
+rm --recursive --force 容器
+
 cd "$ROOT/临时"
-
-mkdir --parents "$ROOT/容器"
-
-mkdir --parents "$ROOT/容器/bin"
-tar --extract --file gron.tgz --directory "$ROOT/容器/bin"
+tar --extract --file gron.tgz --directory "$ROOT/软件"
 
 }

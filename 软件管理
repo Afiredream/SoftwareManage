@@ -109,37 +109,27 @@ if [[ "${运行命令}" == "依赖" ]];then
         ln --symbolic --force --relative "${运行目录}/${运行命令}" "$HOME/软件/软件运行/${运行命令}"
     done
 
-
-    for 文件名称 in "${!运行路径[@]}"; do
-        mkdir --parents "$ROOT/容器/bin"
-        相对路径="${运行路径[${文件名称}]}"
-        echo '#!/bin/env dash' > "$ROOT/容器/bin/${文件名称}"
-        echo 'ROOT="$(dirname "$0")"' >> "$ROOT/容器/bin/${文件名称}"
-        echo 'ROOT="$(dirname "$ROOT")"' >> "$ROOT/容器/bin/${文件名称}"
-        echo 'exec "$ROOT'${相对路径}'" "$@"' >> "$ROOT/容器/bin/${文件名称}"
-        chmod +x "$ROOT/容器/bin/${文件名称}"
-    done
-
-    cd "$ROOT/容器/bin"
     mkdir --parents "$ROOT/运行"
-    for 文件名称 in *; do
+    for 文件名称 in "${!运行路径[@]}"; do
+        相对路径="${运行路径[${文件名称}]}"
         echo '#!/bin/env dash' > "$ROOT/运行/${文件名称}"
         echo 'FILE="$(realpath "$0")"' >> "$ROOT/运行/${文件名称}"
         echo 'ROOT="$(dirname "$FILE")"' >> "$ROOT/运行/${文件名称}"
         echo 'ROOT="$(dirname "$ROOT")"' >> "$ROOT/运行/${文件名称}"
+        echo 'LIST="$(dirname "$ROOT")"' >> "$ROOT/运行/${文件名称}"
         echo 'NAME="$(basename "$FILE")"' >> "$ROOT/运行/${文件名称}"
         for 软件名称 in "${运行依赖[@]}"; do
             [[ -z "${软件名称}" ]] && continue
-            echo 'export PATH="$HOME/软件/软件仓库/'${软件名称}'/运行:$PATH"' >> "$ROOT/运行/${文件名称}"
+            echo 'export PATH="$LIST/'${软件名称}'/运行:$PATH"' >> "$ROOT/运行/${文件名称}"
         done
         for 软件名称 in "${动态链接[@]}"; do
         [[ -z "${软件名称}" ]] && continue
-            echo 'export LD_LIBRARY_PATH="$HOME/软件/软件仓库/'${软件名称}'/共享:$LD_LIBRARY_PATH"' >> "$ROOT/运行/${文件名称}"
+            echo 'export LD_LIBRARY_PATH="$LIST/'${软件名称}'/共享:$LD_LIBRARY_PATH"' >> "$ROOT/运行/${文件名称}"
         done
         [[ -d "$ROOT/容器/lib" ]] && echo 'export LD_LIBRARY_PATH="$ROOT/容器/lib:$LD_LIBRARY_PATH"' >> "$ROOT/运行/${文件名称}"
         [[ -e "$ROOT/数据" ]] && echo 'export HOME="$ROOT/数据"' >> "$ROOT/运行/${文件名称}"
         [[ -f "$ROOT/配置/${文件名称}" ]] && echo '. "$ROOT/配置/$NAME"' >> "$ROOT/运行/${文件名称}"
-        echo 'exec "$ROOT/容器/bin/$NAME" "$@"' >> "$ROOT/运行/${文件名称}"
+        echo 'exec "$ROOT/'${相对路径}'" "$@"' >> "$ROOT/运行/${文件名称}"
         chmod +x "$ROOT/运行/${文件名称}"
     done
 
@@ -177,3 +167,13 @@ fi
 #     echo "${软件版本}" > "$ROOT/版本"
 
 # fi
+
+
+
+if [[ "${运行命令}" == "全部更新" ]];then
+    软件列表="$HOME/软件/软件仓库"
+    cd "${软件列表}"
+    for 软件名称 in *; do
+        软件管理 依赖 "${软件名称}"
+    done
+fi  

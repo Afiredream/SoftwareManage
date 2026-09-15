@@ -6,15 +6,17 @@
 typeset -A 资源链接
 资源链接[basel]=https://github.com/TomWright/dasel/releases/download/v3.11.2/dasel_linux_amd64
 终端命令=(basel)
+typeset -A 运行路径
+运行路径[basel]=软件/basel
 
 配置部署() {
 
+cd "$ROOT"
+mkdir --parents 软件
+rm --recursive --force 容器
+
 cd "$ROOT/临时"
-
-mkdir --parents "$ROOT/容器"
-
 chmod +x basel
-mkdir --parents "$ROOT/容器/bin"
-cp --force basel "$ROOT/容器/bin/basel"
+cp --force basel "$ROOT/软件"
 
 }

@@ -6,13 +6,15 @@
 typeset -A 资源链接
 资源链接[patchelf.tar.gz]=https://github.com/NixOS/patchelf/releases/download/0.19.1/patchelf-0.19.1-x86_64.tar.gz
 终端命令=(patchelf)
+typeset -A 运行路径
+运行路径[patchelf]=容器/bin/patchelf
 
 配置部署() {
 
+cd "$ROOT"
+mkdir --parents 容器
+
 cd "$ROOT/临时"
-
-mkdir --parents "$ROOT/容器"
-
 tar --extract --file patchelf.tar.gz --directory "$ROOT/容器"
 
 }

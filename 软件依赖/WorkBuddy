@@ -7,21 +7,20 @@ typeset -A 资源链接
 资源链接[WorkBuddy.deb]=https://download.codebuddy.cn/workbuddy/saas/linux-x64-deb/WorkBuddy-linux-x64-deb-5.5.4.38151288-1ca4889a.deb
 终端命令=(workbuddy codebuddy)
 typeset -A 运行路径
-运行路径[workbuddy]=/opt/WorkBuddy/workbuddy
-运行路径[codebuddy]=/opt/WorkBuddy/resources/app.asar.unpacked/cli/bin/codebuddy
+运行路径[workbuddy]=容器/opt/WorkBuddy/workbuddy
+运行路径[codebuddy]=容器/opt/WorkBuddy/resources/app.asar.unpacked/cli/bin/codebuddy
 
 配置部署() {
 
+cd "$ROOT"
+mkdir --parents 容器
+mkdir --parents 数据
+
 cd "$ROOT/临时"
-
-mkdir --parents "$ROOT/容器"
-mkdir --parents "$ROOT/数据"
-
 ar x WorkBuddy.deb
-tar --extract --file data.tar.xz --directory "$ROOT/容器"
-
-rm --force data.tar.xz
-rm --force debian-binary
+tar --extract --file data.tar.* --directory "$ROOT/容器"
+rm --force data.tar.*
 rm --force control.tar.*
+rm --force debian-binary
 
 }

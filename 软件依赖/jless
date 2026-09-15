@@ -6,14 +6,16 @@
 typeset -A 资源链接
 资源链接[jless.zip]=https://github.com/PaulJuliusMartinez/jless/releases/download/v0.9.0/jless-v0.9.0-x86_64-unknown-linux-gnu.zip
 终端命令=(jless)
-软件依赖=(unzip)
+typeset -A 运行路径
+运行路径[jless]=软件/jless
 
 配置部署() {
 
-cd "$ROOT/临时"
-mkdir --parents "$ROOT/容器"
+cd "$ROOT"
+mkdir --parents 软件
+rm --recursive --force 容器
 
-mkdir --parents "$ROOT/容器/bin"
-unzip -o jless.zip -d "$ROOT/容器/bin"
+cd "$ROOT/临时"
+unzip -o jless.zip -d "$ROOT/软件"
 
 }

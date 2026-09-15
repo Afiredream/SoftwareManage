@@ -6,13 +6,16 @@
 typeset -A 资源链接
 资源链接[jo.tar.gz]=https://github.com/jpmens/jo/releases/download/1.9/jo-1.9.tar.gz
 终端命令=(jo)
+typeset -A 运行路径
+运行路径[jo]=容器/bin/jo
 
 配置部署() {
 
+cd "$ROOT"
+mkdir --parents 代码
+mkdir --parents 容器
+
 cd "$ROOT/临时"
-
-mkdir --parents "$ROOT/代码"
-
 tar --extract --file jo.tar.gz --directory "$ROOT/代码" 
 cd "$ROOT/代码/jo-${软件版本}"
 ./configure --prefix=/

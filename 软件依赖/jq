@@ -6,14 +6,17 @@
 typeset -A 资源链接
 资源链接[jq]=https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux64
 终端命令=(jq)
+typeset -A 运行路径
+运行路径[jq]=软件/jq
 
 配置部署() {
 
-cd "$ROOT/临时"
-mkdir --parents "$ROOT/容器"
+cd "$ROOT"
+mkdir --parents 软件
+rm --recursive --force 容器
 
+cd "$ROOT/临时"
 chmod +x jq
-mkdir --parents "$ROOT/容器/bin"
-cp --force jq "$ROOT/容器/bin"
+cp --force jq "$ROOT/软件/jq"
 
 }
