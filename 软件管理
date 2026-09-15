@@ -94,43 +94,86 @@ if [[ "${运行命令}" == "依赖" ]];then
     cd "${临时目录}"
 
     if [[ "${软件版本}" != "$(cat "$ROOT/版本")" ]];then
-        for 文件名称 in "${!资源链接[@]}"; do
-            文件链接="${资源链接[${文件名称}]}"
-            wget --output-document="${文件名称}" "${文件链接}"
-        done 
+        ;
     fi
 
-    配置部署
-    for 运行命令  in "${终端命令[@]}"; do
-        ln --symbolic --force --relative "${运行目录}/${运行命令}" "$HOME/软件/软件运行/${运行命令}"
-    done
-    echo "${软件版本}" > "$ROOT/版本"
-
-fi
-
-
-if [[ "${运行命令}" == "软件" ]];then
-
-    软件名称="$2"
-    依赖路径="${软件仓库}/${软件名称}"
-
-    source "${依赖路径}"
-    export ROOT="$HOME/软件/软件仓库/${软件名称}"
-
-    [[ "${软件版本}" == "$(cat "$ROOT/版本")" ]]  && exit
-
-    mkdir --parents "$ROOT"
-    mkdir --parents "${临时目录}"
-    
-    cd "${临时目录}"
     for 文件名称 in "${!资源链接[@]}"; do
+        [[ -z "${文件名称}" ]] && continue
         文件链接="${资源链接[${文件名称}]}"
-        wget --output-document="${文件名称}" "${文件链接}"
+        [[ -z "${文件链接}" ]] && continue
+        [[ -f "${文件名称}" ]] || wget --output-document="${文件名称}" "${文件链接}"
     done
+
     配置部署
-    for 运行命令  in "${终端命令[@]}"; do
+    for 运行命令 in "${终端命令[@]}"; do
         ln --symbolic --force --relative "${运行目录}/${运行命令}" "$HOME/软件/软件运行/${运行命令}"
     done
+
+
+    for 文件名称 in "${!运行路径[@]}"; do
+        mkdir --parents "$ROOT/容器/bin"
+        相对路径="${运行路径[${文件名称}]}"
+        echo '#!/bin/env dash' > "$ROOT/容器/bin/${文件名称}"
+        echo 'ROOT="$(dirname "$0")"' >> "$ROOT/容器/bin/${文件名称}"
+        echo 'ROOT="$(dirname "$ROOT")"' >> "$ROOT/容器/bin/${文件名称}"
+        echo 'exec "$ROOT'${相对路径}'" "$@"' >> "$ROOT/容器/bin/${文件名称}"
+        chmod +x "$ROOT/容器/bin/${文件名称}"
+    done
+
+    cd "$ROOT/容器/bin"
+    mkdir --parents "$ROOT/运行"
+    for 文件名称 in *; do
+        echo '#!/bin/env dash' > "$ROOT/运行/${文件名称}"
+        echo 'FILE="$(realpath "$0")"' >> "$ROOT/运行/${文件名称}"
+        echo 'ROOT="$(dirname "$FILE")"' >> "$ROOT/运行/${文件名称}"
+        echo 'ROOT="$(dirname "$ROOT")"' >> "$ROOT/运行/${文件名称}"
+        echo 'NAME="$(basename "$FILE")"' >> "$ROOT/运行/${文件名称}"
+        for 软件名称 in "${运行依赖[@]}"; do
+            [[ -z "${软件名称}" ]] && continue
+            echo 'export PATH="$HOME/软件/软件仓库/'${软件名称}'/运行:$PATH"' >> "$ROOT/运行/${文件名称}"
+        done
+        for 软件名称 in "${动态链接[@]}"; do
+        [[ -z "${软件名称}" ]] && continue
+            echo 'export LD_LIBRARY_PATH="$HOME/软件/软件仓库/'${软件名称}'/共享:$LD_LIBRARY_PATH"' >> "$ROOT/运行/${文件名称}"
+        done
+        [[ -d "$ROOT/容器/lib" ]] && echo 'export LD_LIBRARY_PATH="$ROOT/容器/lib:$LD_LIBRARY_PATH"' >> "$ROOT/运行/${文件名称}"
+        [[ -e "$ROOT/数据" ]] && echo 'export HOME="$ROOT/数据"' >> "$ROOT/运行/${文件名称}"
+        [[ -f "$ROOT/配置/${文件名称}" ]] && echo '. "$ROOT/配置/$NAME"' >> "$ROOT/运行/${文件名称}"
+        echo 'exec "$ROOT/容器/bin/$NAME" "$@"' >> "$ROOT/运行/${文件名称}"
+        chmod +x "$ROOT/运行/${文件名称}"
+    done
+
+
+
     echo "${软件版本}" > "$ROOT/版本"
 
 fi
+
+
+# if [[ "${运行命令}" == "软件" ]];then
+
+#     软件名称="$2"
+#     依赖路径="${软件仓库}/${软件名称}"
+
+#     source "${依赖路径}"
+#     export ROOT="$HOME/软件/软件仓库/${软件名称}"
+
+#     [[ "${软件版本}" == "$(cat "$ROOT/版本")" ]]  && exit
+
+#     mkdir --parents "$ROOT"
+#     mkdir --parents "${临时目录}"
+    
+#     cd "${临时目录}"
+#     for 文件名称 in "${!资源链接[@]}"; do
+#         [[ -z "${文件名称}" ]] && continue
+#         文件链接="${资源链接[${文件名称}]}"
+#         [[ -z "${文件链接}" ]] && continue
+#         [[ -f "${文件名称}" ]] || wget --output-document="${文件名称}" "${文件链接}"
+#     done
+#     配置部署
+#     for 运行命令  in "${终端命令[@]}"; do
+#         ln --symbolic --force --relative "${运行目录}/${运行命令}" "$HOME/软件/软件运行/${运行命令}"
+#     done
+#     echo "${软件版本}" > "$ROOT/版本"
+
+# fi

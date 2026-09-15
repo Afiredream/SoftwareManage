@@ -8,9 +8,13 @@ typeset -A 资源链接
 终端命令=(basel)
 
 配置部署() {
-  cd "$ROOT/临时"
-  chmod +x basel
-  mkdir --parents "$ROOT/运行"
-  mv --force basel "$ROOT/运行/basel"
+
+cd "$ROOT/临时"
+
+mkdir --parents "$ROOT/容器"
+
+chmod +x basel
+mkdir --parents "$ROOT/容器/bin"
+cp --force basel "$ROOT/容器/bin/basel"
 
 }

@@ -8,7 +8,11 @@ typeset -A 资源链接
 终端命令=(htmlq)
 
 配置部署() {
-  cd "$ROOT/临时"
-  mkdir --parents "$ROOT/运行"
-  tar --extract --file htmlq.tar.gz --directory "$ROOT/运行"
+
+cd "$ROOT/临时"
+mkdir --parents "$ROOT/容器"
+
+mkdir --parents "$ROOT/容器/bin"
+tar --extract --file htmlq.tar.gz --directory "$ROOT/容器/bin"
+
 }

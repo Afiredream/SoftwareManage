@@ -9,7 +9,11 @@ typeset -A 资源链接
 软件依赖=(unzip)
 
 配置部署() {
-  cd "$ROOT/临时"
-  mkdir --parents "$ROOT/运行"
-  unzip jless.zip -d "$ROOT/运行"
+
+cd "$ROOT/临时"
+mkdir --parents "$ROOT/容器"
+
+mkdir --parents "$ROOT/容器/bin"
+unzip -o jless.zip -d "$ROOT/容器/bin"
+
 }

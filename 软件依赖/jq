@@ -8,8 +8,12 @@ typeset -A 资源链接
 终端命令=(jq)
 
 配置部署() {
-  cd "$ROOT/临时"
-  chmod +x jq
-  mkdir --parents "$ROOT/运行"
-  mv --force jq "$ROOT/运行/jq"
+
+cd "$ROOT/临时"
+mkdir --parents "$ROOT/容器"
+
+chmod +x jq
+mkdir --parents "$ROOT/容器/bin"
+cp --force jq "$ROOT/容器/bin"
+
 }

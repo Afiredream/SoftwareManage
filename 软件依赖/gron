@@ -8,7 +8,12 @@ typeset -A 资源链接
 终端命令=(gron)
 
 配置部署() {
-  cd "$ROOT/临时"
-  mkdir --parents "$ROOT/运行"
-  tar --extract --file gron.tgz --directory "$ROOT/运行"
+
+cd "$ROOT/临时"
+
+mkdir --parents "$ROOT/容器"
+
+mkdir --parents "$ROOT/容器/bin"
+tar --extract --file gron.tgz --directory "$ROOT/容器/bin"
+
 }
