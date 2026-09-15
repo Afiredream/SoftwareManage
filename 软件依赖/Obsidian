@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-软件名称=obsidian
+软件名称=Obsidian
 软件版本=1.13.7
 
 typeset -A 资源链接

@@ -23,6 +23,11 @@ rm --recursive --force firefox
 
 cd "$ROOT/配置"
 cat > firefox <<'EOF'
+Home=$(eval echo ~$USER)
+export XDG_CACHE_HOME="$Home/.cache"
+export XDG_CONFIG_HOME="$Home/.config"
+export XDG_DATA_HOME="$Home/.local/share"
+export XDG_STATE_HOME="$Home/.local/state"
 set -- "$@" -P Profile
 EOF
 

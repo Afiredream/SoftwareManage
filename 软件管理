@@ -77,9 +77,10 @@ if [[ "${运行命令}" == "依赖" ]];then
 
     软件名称="$2"
     依赖路径="${软件依赖}/${软件名称}"
+    Home=$(eval echo ~$USER)
 
     source "${依赖路径}"
-    export ROOT="$HOME/软件/软件仓库/${软件名称}"
+    export ROOT="$Home/软件/软件仓库/${软件名称}"
 
 
     临时目录="$ROOT/临时"
@@ -106,7 +107,7 @@ if [[ "${运行命令}" == "依赖" ]];then
 
     配置部署
     for 运行命令 in "${终端命令[@]}"; do
-        ln --symbolic --force --relative "${运行目录}/${运行命令}" "$HOME/软件/软件运行/${运行命令}"
+        ln --symbolic --force --relative "${运行目录}/${运行命令}" "$Home/软件/软件运行/${运行命令}"
     done
 
     mkdir --parents "$ROOT/运行"

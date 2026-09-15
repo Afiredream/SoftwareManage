@@ -1,0 +1,32 @@
+#!/bin/ksh
+
+软件名称=Codium
+软件版本=1.135.06055
+
+typeset -A 资源链接
+资源链接[VSCodium.tar.gz]=https://github.com/VSCodium/vscodium/releases/download/1.135.06055/VSCodium-linux-x64-1.135.06055.tar.gz
+终端命令=(code)
+typeset -A 运行路径
+运行路径[code]=软件/codium
+
+
+配置部署() {
+
+cd "$ROOT"
+
+mkdir --parents 软件
+mkdir --parents 数据
+mkdir --parents 配置
+
+cd "$ROOT/临时"
+tar --extract --file VSCodium.tar.gz --directory "$ROOT/软件" 
+
+cd "$ROOT/配置"
+cat > code <<'EOF'
+export QT_IM_MODULE=fcitx
+export GTK_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+set -- "$@" --ozone-platform=x11
+EOF
+
+}
