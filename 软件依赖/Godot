@@ -1,0 +1,24 @@
+#!/bin/ksh
+
+软件名称=Godot
+软件版本=4.7.2
+
+typeset -A 资源链接
+资源链接[Godot.zip]=https://godot-releases.nbg1.your-objectstorage.com/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+终端命令=(godot)
+typeset -A 运行路径
+运行路径[godot]=软件/Godot
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 软件
+mkdir --parents 数据
+
+cd "$ROOT/临时"
+unzip -o Godot.zip -d "$ROOT/软件"
+
+cd "$ROOT/软件"
+mv --force Godot_* Godot
+
+}

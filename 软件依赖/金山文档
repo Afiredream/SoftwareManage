@@ -4,18 +4,22 @@
 软件版本=12.1.2.28080
 
 typeset -A 资源链接
-资源链接[wps-office.deb]=https://wdl1.pcfg.cache.wpscdn.com/wpsdl/wpsoffice/download/linux/11723/wps-office_11.1.0.11723.XA_amd64.deb
-终端命令=(et wps wpp)
+资源链接[wps-office.deb]=https://archive.ubuntukylin.com/software/pool/partner/wps-office_12.1.2.28080_amd64.deb
+终端命令=(et wps wpp ksolaunch)
+# 动态链接=(libxml2.2.13)
 typeset -A 运行路径
-运行路径[et]=容器/opt/kingsoft/wps-office/office6/et
-运行路径[wps]=容器/opt/kingsoft/wps-office/office6/wps
-运行路径[wpp]=容器/opt/kingsoft/wps-office/office6/wpp
+运行路径[et]=软件/et
+运行路径[wps]=软件/wps
+运行路径[wpp]=软件/wpp
+运行路径[wpspdf]=软件/wpspdf
+运行路径[ksolaunch]=软件/office6/ksolaunch
 
 配置部署() {
 
 cd "$ROOT"
 mkdir --parents 容器
 mkdir --parents 数据
+mkdir --parents 软件
 
 cd "$ROOT/临时"
 ar x wps-office.deb
@@ -24,5 +28,11 @@ rm --force data.tar.*
 rm --force control.tar.*
 rm --force debian-binary
 
+cd "$ROOT/软件"
+ln --symbolic --force --relative "$ROOT/容器/usr/bin/et" et
+ln --symbolic --force --relative "$ROOT/容器/usr/bin/wps" wps
+ln --symbolic --force --relative "$ROOT/容器/usr/bin/wpp" wpp
+ln --symbolic --force --relative "$ROOT/容器/usr/bin/wpspdf" wpspdf
+ln --symbolic --force --relative --no-dereference "$ROOT/容器/opt/kingsoft/wps-office/office6" office6
 
 }

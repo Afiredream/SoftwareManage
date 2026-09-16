@@ -1,0 +1,22 @@
+#!/bin/ksh
+
+软件名称=Rust
+软件版本=0
+
+typeset -A 资源链接
+资源链接[sh.rustup.rs]=https://sh.rustup.rs
+终端命令=(cargo)
+typeset -A 运行路径
+运行路径[cargo]=数据/.cargo/bin/cargo
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 数据
+
+cd "$ROOT/临时"
+chmod +x sh.rustup.rs
+export HOME="$ROOT/数据"
+./sh.rustup.rs
+
+}

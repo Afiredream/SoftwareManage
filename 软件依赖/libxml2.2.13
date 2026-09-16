@@ -1,0 +1,27 @@
+#!/bin/ksh
+
+软件名称=libxml2.2.13
+软件版本=2.13.9
+
+typeset -A 资源链接
+资源链接[libxml2.tar.xz]=https://download.gnome.org/sources/libxml2/2.13/libxml2-2.13.9.tar.xz
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 容器
+mkdir --parents 代码
+
+cd "$ROOT/临时"
+tar --extract --file libxml2.tar.xz --directory "$ROOT/代码"
+cd "$ROOT/代码/libxml2-${软件版本}"
+./configure --prefix=/ --with-python=no --without-debug
+make --jobs=$(nproc)
+mkdir --parents "$ROOT/容器"
+make install DESTDIR="$ROOT/容器"
+rm --recursive --force "$ROOT/代码"
+
+cd "$ROOT/容器"
+ln --symbolic --force --relative --no-dereference lib "$ROOT/共享"
+
+}
