@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-软件名称=libxml2.2.13
+软件名称=libxml.2.13
 软件版本=2.13.9
 
 typeset -A 资源链接

@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-软件名称=Rust
+软件名称=rust
 软件版本=0
 
 typeset -A 资源链接

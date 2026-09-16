@@ -1,0 +1,22 @@
+#!/bin/ksh
+
+软件名称=go
+软件版本=1.27.1
+
+typeset -A 资源链接
+资源链接[go.tar.gz]=https://golang.google.cn/dl/go1.27.1.linux-amd64.tar.gz
+终端命令=(go)
+typeset -A 运行路径
+运行路径[go]=容器/bin/go
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 容器
+
+cd "$ROOT/临时"
+tar --extract --file go.tar.gz --directory "$ROOT/临时"
+cp --recursive --force --no-target-directory go "$ROOT/容器"
+rm --recursive --force go
+
+}

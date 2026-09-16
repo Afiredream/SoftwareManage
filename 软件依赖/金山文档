@@ -6,7 +6,6 @@
 typeset -A 资源链接
 资源链接[wps-office.deb]=https://archive.ubuntukylin.com/software/pool/partner/wps-office_12.1.2.28080_amd64.deb
 终端命令=(et wps wpp ksolaunch)
-# 动态链接=(libxml2.2.13)
 typeset -A 运行路径
 运行路径[et]=软件/et
 运行路径[wps]=软件/wps
