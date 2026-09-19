@@ -130,7 +130,12 @@ if [[ "${运行命令}" == "依赖" ]];then
         [[ -d "$ROOT/容器/lib" ]] && echo 'export LD_LIBRARY_PATH="$ROOT/容器/lib:$LD_LIBRARY_PATH"' >> "$ROOT/运行/${文件名称}"
         [[ -e "$ROOT/数据" ]] && echo 'export HOME="$ROOT/数据"' >> "$ROOT/运行/${文件名称}"
         [[ -f "$ROOT/配置/${文件名称}" ]] && echo '. "$ROOT/配置/$NAME"' >> "$ROOT/运行/${文件名称}"
-        echo 'exec "$ROOT/'${相对路径}'" "$@"' >> "$ROOT/运行/${文件名称}"
+        if [[ -f "$ROOT/钩子/${文件名称}" ]];then
+            echo '"$ROOT/'${相对路径}'" "$@"' >> "$ROOT/运行/${文件名称}"
+            echo '. "$ROOT/钩子/$NAME"' >> "$ROOT/运行/${文件名称}"
+        else
+            echo 'exec "$ROOT/'${相对路径}'" "$@"' >> "$ROOT/运行/${文件名称}"
+        fi
         chmod +x "$ROOT/运行/${文件名称}"
     done
 
