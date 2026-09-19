@@ -1,18 +1,36 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=WinBoat
+软件版本=0.9.2
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[WinBoat.AppImage]=https://github.com/TibixDev/winboat/releases/download/v0.9.2/winboat-0.9.2-x86_64.AppImage
+终端命令=(winboat)
 typeset -A 运行路径
-运行路径[]=
+运行路径[winboat]=临时/WinBoat.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
+mkdir --parents 配置
+mkdir --parents 钩子
 
 cd "$ROOT/临时"
+chmod +x WinBoat.AppImage
+
+cd "$ROOT/配置"
+cat > winboat <<'EOF'
+cd "$HOME/.winboat"
+export DATA="${DATA:-$HOME}"
+podman-compose up --detach
+export ELECTRON_OZONE_PLATFORM_HINT=x11
+set -- "$@" --ozone-platform=x11
+EOF
+
+cd "$ROOT/钩子"
+cat > winboat <<'EOF'
+podman-compose stop
+EOF
 
 }

@@ -1,18 +1,26 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=git
+软件版本=2.55.0
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[git.tar.xz]=https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.55.0.tar.xz
+终端命令=(git)
 typeset -A 运行路径
-运行路径[]=
+运行路径[git]=容器/home/bin/git
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 代码
+mkdir --parents 容器
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+tar --extract --file git.tar.xz --directory "$ROOT/代码" 
+cd "$ROOT/代码/git-${软件版本}"
+make --jobs=$(nproc)
+make install DESTDIR="$ROOT/容器"
+rm --recursive --force "$ROOT/代码"
 
 }

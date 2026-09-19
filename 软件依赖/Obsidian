@@ -26,7 +26,6 @@ rm --force debian-binary
 
 cd "$ROOT/配置"
 cat > obsidian <<'EOF'
-export HOME="$ROOT/数据"
 JSON='{vaults:{"":{"path":$BASE,"open":true, "ts":""}}}'
 JSON="$(jq --null-input --arg BASE "$HOME/obsidian" "$JSON")"
 echo $JSON > "$HOME/.config/obsidian/obsidian.json"
