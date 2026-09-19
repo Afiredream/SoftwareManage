@@ -15,6 +15,7 @@ cd "$ROOT"
 mkdir --parents 代码
 mkdir --parents 容器
 mkdir --parents 数据
+mkdir --parents 配置
 
 cd "$ROOT/临时"
 tar --extract --file git.tar.xz --directory "$ROOT/代码" 
@@ -22,5 +23,11 @@ cd "$ROOT/代码/git-${软件版本}"
 make --jobs=$(nproc)
 make install DESTDIR="$ROOT/容器"
 rm --recursive --force "$ROOT/代码"
+
+cd "$ROOT/配置"
+cat > git << 'EOF'
+export PATH="$ROOT/容器/home/bin:$PATH"
+export PATH="$ROOT/容器/home/libexec/git-core:$PATH"
+EOF
 
 }
