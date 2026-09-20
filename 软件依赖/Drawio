@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=Drawio
+软件版本=31.4.5
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[Drawio.AppImage]=https://github.com/jgraph/drawio-desktop/releases/download/v31.4.5/drawio-x86_64-31.4.5.AppImage
+终端命令=(drawio)
 typeset -A 运行路径
-运行路径[]=
+运行路径[drawio]=临时/Drawio.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x Drawio.AppImage
 
 }

@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=Lutris
+软件版本=0.5.22
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[Lutris.AppImage]=https://github.com/lucasmz1/Lutris_AppImage/releases/download/pre-release/Lutris-x86_64.AppImage
+终端命令=(lutris)
 typeset -A 运行路径
-运行路径[]=
+运行路径[lutris]=临时/Lutris.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x Lutris.AppImage
 
 }

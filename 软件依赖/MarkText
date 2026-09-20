@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=MarkText
+软件版本=0.19.1
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[MarkText.AppImage]=https://github.com/marktext/marktext/releases/download/v0.19.1/marktext-linux-0.19.1.AppImage
+终端命令=(marktext)
 typeset -A 运行路径
-运行路径[]=
+运行路径[marktext]=临时/MarkText.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x MarkText.AppImage
 
 }

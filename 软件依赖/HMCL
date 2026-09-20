@@ -1,18 +1,22 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=HMCL
+软件版本=3.17.0.356
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[HMCL.jar]=https://hmcl.glavo.site/download/HMCL-3.17.0.356.jar
+终端命令=(hmcl)
+运行依赖=(Java)
+运行方式=java
 typeset -A 运行路径
-运行路径[]=
+运行路径[hmcl]=临时/HMCL.jar
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x HMCL.jar
 
 }

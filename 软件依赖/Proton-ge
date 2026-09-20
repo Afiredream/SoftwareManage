@@ -1,18 +1,34 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=Proton-ge
+软件版本=11.7
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[Proton.tar.gz]=https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton11-7/GE-Proton11-7-x86_64.tar.gz
+终端命令=(proton-ge)
 typeset -A 运行路径
-运行路径[]=
+运行路径[proton-ge]=软件/proton
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
+mkdir --parents 配置
+rm --recursive --force 软件
 
 cd "$ROOT/临时"
+tar --extract --file Proton.tar.gz --directory .
+mv GE-Proton* "$ROOT/软件"
+
+cd "$ROOT/配置"
+cat > proton-ge <<'EOF'
+mkdir --parents "$PREFIX"
+mkdir --parents "$PREFIX/drive_c/users"
+export STEAM_COMPAT_DATA_PATH="$PREFIX"
+export STEAM_COMPAT_CLIENT_INSTALL_PATH=/
+ln --symbolic --force --relative --no-dereference "$PREFIX" "$PREFIX/pfx"
+ln --symbolic --force --relative --no-dereference "$PREFIX/drive_c/users/Public" "$PREFIX/drive_c/users/steamuser"
+set -- runinprefix "$@"
+EOF
 
 }

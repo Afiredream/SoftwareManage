@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=Polymerium
+软件版本=1.13.1
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[Polymerium.AppImage]=https://github.com/d3ara1n/Polymerium/releases/download/v1.13.1/Polymerium.AppImage
+终端命令=(polymerium)
 typeset -A 运行路径
-运行路径[]=
+运行路径[polymerium]=临时/Polymerium.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x Polymerium.AppImage
 
 }

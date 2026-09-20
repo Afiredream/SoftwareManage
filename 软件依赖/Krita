@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=Krita
+软件版本=5.3.4
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[Krita.AppImage]=https://download.kde.org/stable/krita/5.3.4/krita-5.3.4-x86_64.AppImage
+终端命令=(krita)
 typeset -A 运行路径
-运行路径[]=
+运行路径[krita]=临时/Krita.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x Krita.AppImage
 
 }

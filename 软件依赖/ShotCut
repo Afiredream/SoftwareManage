@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=ShotCut
+软件版本=26.8.1
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[ShotCut.AppImage]=https://sourceforge.net/projects/shotcut/files/v26.8.1/shotcut-linux-x86_64-26.8.1.AppImage/download
+终端命令=(shotcut)
 typeset -A 运行路径
-运行路径[]=
+运行路径[shotcut]=临时/ShotCut.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x ShotCut.AppImage
 
 }

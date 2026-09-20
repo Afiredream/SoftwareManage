@@ -1,13 +1,13 @@
 #!/bin/ksh
 
-软件名称=Proton-dw
-软件版本=11.0
+软件名称=Proton-tkg
+软件版本=7.6.r12.g51472395
 
 typeset -A 资源链接
-资源链接[Proton.tar.xz]=https://dawn.wine/dawn-winery/dwproton/releases/download/dwproton-11.0-12/dwproton-11.0-12-x86_64.tar.xz
-终端命令=(proton-dw)
+资源链接[Proton.tar.gz]=https://github.com/Frogging-Family/wine-tkg-git/releases/download/7.6.r12.g51472395/proton_tkg_7.6.r12.g51472395.release.tar.gz
+终端命令=(proton-tkg)
 typeset -A 运行路径
-运行路径[proton-dw]=软件/proton
+运行路径[proton-tkg]=软件/proton
 
 配置部署() {
 
@@ -17,8 +17,8 @@ mkdir --parents 配置
 rm --recursive --force 软件
 
 cd "$ROOT/临时"
-tar --extract --file Proton.tar.* --directory .
-mv dwproton* "$ROOT/软件"
+tar --extract --file Proton.tar.gz --directory .
+mv proton_tkg_* "$ROOT/软件"
 
 cd "$ROOT/配置"
 cat > proton-ge <<'EOF'

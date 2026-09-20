@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=Kate
+软件版本=12397
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[Kate.AppImage]=https://cdn.kde.org/ci-builds/utilities/kate/master/linux/kate-master-12397-linux-gcc-x86_64.AppImage
+终端命令=(kate)
 typeset -A 运行路径
-运行路径[]=
+运行路径[kate]=临时/Kate.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x Kate.AppImage
 
 }
