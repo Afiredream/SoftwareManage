@@ -5,6 +5,14 @@
 
 typeset -A 资源链接
 资源链接[WinBoat.AppImage]=https://github.com/TibixDev/winboat/releases/download/v0.9.2/winboat-0.9.2-x86_64.AppImage
+资源链接[MicrosoftVisualC++14.exe]=https://aka.ms/vc14/vc_redist.x64.exe
+资源链接[MicrosoftVisualC++12.exe]=https://download.visualstudio.microsoft.com/download/pr/10912041/cee5d6bca2ddbcd039da727bf4acb48a/vcredist_x64.exe
+资源链接[MicrosoftVisualC++11.exe]=https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe
+资源链接[MicrosoftVisualC++10.exe]=https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe
+资源链接[MicrosoftVisualC++09.exe]=https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe
+资源链接[MicrosoftVisualC++08.exe]=https://download.microsoft.com/download/4/a/2/4a22001f-fa3b-4c13-bf4e-42ec249d51c4/vcredist_x64.exe
+资源链接[DirectX.exe]=https://download.microsoft.com/download/8/4/a/84a35bf1-dafe-4ae8-82af-ad2ae20b6b14/directx_Jun2010_redist.exe
+资源链接[SandboxiePlus.exe]=https://github.com/sandboxie-plus/Sandboxie/releases/download/v1.18.4/Sandboxie-Plus-x64-v1.18.4.exe
 终端命令=(winboat)
 typeset -A 运行路径
 运行路径[winboat]=临时/WinBoat.AppImage
@@ -22,7 +30,7 @@ chmod +x WinBoat.AppImage
 cd "$ROOT/配置"
 cat > winboat <<'EOF'
 cd "$HOME/.winboat"
-export DATA="${DATA:-$HOME}"
+export DATA="${DATA:-$ROOT/临时}"
 podman-compose up --detach
 export ELECTRON_OZONE_PLATFORM_HINT=x11
 set -- "$@" --ozone-platform=x11

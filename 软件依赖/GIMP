@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=GIMP
+软件版本=3.2.6
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[GIMP.AppImage]=https://download.gimp.org/gimp/v3.2/linux/GIMP-3.2.6-x86_64.AppImage
+终端命令=(gimp)
 typeset -A 运行路径
-运行路径[]=
+运行路径[gimp]=临时/GIMP.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x GIMP.AppImage
 
 }

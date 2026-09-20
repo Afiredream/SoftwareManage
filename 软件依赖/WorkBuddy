@@ -15,6 +15,7 @@ typeset -A 运行路径
 cd "$ROOT"
 mkdir --parents 容器
 mkdir --parents 数据
+mkdir --parents 配置
 
 cd "$ROOT/临时"
 ar x WorkBuddy.deb
@@ -22,5 +23,10 @@ tar --extract --file data.tar.* --directory "$ROOT/容器"
 rm --force data.tar.*
 rm --force control.tar.*
 rm --force debian-binary
+
+cd "$ROOT/配置"
+cat > codebuddy <<'EOF'
+export PATH="$ROOT/容器/opt/WorkBuddy/resources/runtime/node/bin:$PATH"
+EOF
 
 }

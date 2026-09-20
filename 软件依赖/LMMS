@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=LMMS
+软件版本=1.3.0
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[LMMS.AppImage]=https://github.com/LMMS/lmms/releases/download/v1.3.0-alpha.2/lmms-1.3.0-alpha.2-linux-x86_64.AppImage
+终端命令=(lmms)
 typeset -A 运行路径
-运行路径[]=
+运行路径[lmms]=临时/LMMS.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x LMMS.AppImage
 
 }

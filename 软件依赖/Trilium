@@ -1,0 +1,20 @@
+#!/bin/ksh
+
+软件名称=Trilium
+软件版本=0.105.0
+
+typeset -A 资源链接
+资源链接[TriliumNotes.AppImage]=https://github.com/TriliumNext/Trilium/releases/download/v0.105.0/TriliumNotes-v0.105.0-linux-x64.AppImage
+终端命令=(trilium)
+typeset -A 运行路径
+运行路径[trilium]=临时/TriliumNotes.AppImage
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 数据
+
+cd "$ROOT/临时"
+chmod +x *.AppImage
+
+}
