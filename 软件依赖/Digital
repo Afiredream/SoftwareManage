@@ -1,18 +1,24 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=Digital
+软件版本=0.31
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[Digital.zip]=https://github.com/hneemann/Digital/releases/download/v0.31/Digital.zip
+终端命令=(digital)
 typeset -A 运行路径
-运行路径[]=
+运行路径[digital]=软件/Digital.sh
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
+mkdir --parents 软件
+rm --recursive --force 软件
 
 cd "$ROOT/临时"
+unzip Digital.zip
+mv Digital "$ROOT/软件"
+
 
 }

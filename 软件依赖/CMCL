@@ -1,18 +1,18 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=CMCL
+软件版本=2.2.2
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[cmcl.jar]=https://github.com/MrShieh-X/console-minecraft-launcher/releases/download/2.2.2/cmcl.jar
+运行方式=java
+终端命令=(cmcl)
 typeset -A 运行路径
-运行路径[]=
+运行路径[cmcl]=临时/cmcl.jar
 
 配置部署() {
 
 cd "$ROOT"
-
-cd "$ROOT/临时"
+mkdir --parents 数据
 
 }

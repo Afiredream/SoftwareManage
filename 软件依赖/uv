@@ -1,18 +1,23 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=uv
+软件版本=0
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[install.sh]=https://astral.sh/uv/install.sh
+终端命令=(uv)
 typeset -A 运行路径
-运行路径[]=
+运行路径[uv]=数据/.local/bin/uv
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
+mkdir --parents 配置
 
 cd "$ROOT/临时"
+export HOME="$ROOT/数据"
+chmod +x install.sh
+./install.sh
 
 }

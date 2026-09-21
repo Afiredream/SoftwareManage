@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=Steam
+软件版本=1.0.0.87-3
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[Steam.AppImage]=https://github.com/ivan-hc/Steam-appimage/releases/download/1.0.0.87-3%402026-09-01_1788260048/Steam-1.0.0.87-3-anylinux-x86_64.AppImage
+终端命令=(steam)
 typeset -A 运行路径
-运行路径[]=
+运行路径[steam]=临时/Steam.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x Steam.AppImage
 
 }

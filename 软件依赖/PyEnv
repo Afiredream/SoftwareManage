@@ -1,18 +1,22 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=PyEnv
+软件版本=2.8.6
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[pyenv.tar.gz]=https://github.com/pyenv/pyenv/archive/refs/tags/v2.8.6.tar.gz
+终端命令=(pyenv)
 typeset -A 运行路径
-运行路径[]=
+运行路径[pyenv]=软件/bin/pyenv
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
+rm --recursive --force 软件
 
 cd "$ROOT/临时"
+tar --extract --file pyenv.tar.gz --directory .
+mv --force pyenv-* "$ROOT/软件"
 
 }

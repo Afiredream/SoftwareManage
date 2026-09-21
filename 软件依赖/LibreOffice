@@ -1,18 +1,20 @@
 #!/bin/ksh
 
-软件名称=
-软件版本=
+软件名称=LibreOffice
+软件版本=26.8.0.3
 
 typeset -A 资源链接
-资源链接[]=
-终端命令=()
+资源链接[LibreOffice.AppImage]=https://github.com/Portable-Linux-Apps/LibreOffice-appimage/releases/download/continuous-fresh/LibreOffice-fresh-26.8.0.3-zh-CN-x86_64.AppImage
+终端命令=(libreoffice)
 typeset -A 运行路径
-运行路径[]=
+运行路径[libreoffice]=临时/LibreOffice.AppImage
 
 配置部署() {
 
 cd "$ROOT"
+mkdir --parents 数据
 
 cd "$ROOT/临时"
+chmod +x LibreOffice.AppImage
 
 }
