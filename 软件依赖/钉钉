@@ -1,0 +1,48 @@
+#!/bin/ksh
+
+软件名称=钉钉
+软件版本=4.1.13
+
+typeset -A 资源链接
+资源链接[${软件名称}.deb]=https://dtapp-pub.dingtalk.com/dingtalk-desktop/xc_dingtalk_update/linux_deb/Release/com.alibabainc.dingtalk_8.2.8.260818002_amd64.deb
+终端命令=(${软件名称})
+typeset -A 运行路径
+运行路径[${软件名称}]=软件/com.alibabainc.dingtalk
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 数据
+mkdir --parents 容器
+mkdir --parents 配置
+
+cd "$ROOT/临时"
+ar x ${软件名称}.deb
+tar --extract --file data.tar.* --directory "$ROOT/容器"
+cp --force "$ROOT/容器/opt/apps/com.alibabainc.dingtalk/files/logo.ico" "$ROOT/图标/${软件名称}.ico"
+ln --symbolic --force --relative --no-dereference "$ROOT/容器"/opt/apps/com.alibabainc.dingtalk/files/*-Release.* "$ROOT/软件"
+patchelf --clear-execstack "$ROOT/软件/dingtalk_dll.so"
+rm --force data.tar.*
+rm --force control.tar.*
+rm --force debian-binary
+
+cd "$ROOT/配置"
+cat > ${软件名称} << 'EOF'
+export QT_IM_MODULE=fcitx
+export GTK_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+export LD_LIBRARY_PATH=/lib
+cd "$ROOT/软件"
+EOF
+
+cd "$ROOT/打开"
+cat > ${软件名称}.desktop << EOF
+[Desktop Entry]
+Type=Application
+Terminal=false
+Name=${软件名称}
+Exec=${软件名称}
+Icon=${软件名称}
+EOF
+
+}

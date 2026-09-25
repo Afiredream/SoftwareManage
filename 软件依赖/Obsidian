@@ -18,12 +18,25 @@ mkdir --parents 数据
 
 cd "$ROOT/临时"
 chmod +x Obsidian.AppImage
+./Obsidian.AppImage --appimage-extract
+cp --dereference squashfs-root/.DirIcon "$ROOT/图标/Obsidian.png"
+rm --recursive --force squashfs-root
 
 cd "$ROOT/配置"
 cat > obsidian <<'EOF'
-JSON='{vaults:{"":{"path":$BASE,"open":true, "ts":""}}}'
-JSON="$(jq --null-input --arg BASE "$HOME/obsidian" "$JSON")"
+JSON='{vaults:{"vault":{"path":$BASE,"open":true, "ts":""}}}'
+JSON="$(jq --null-input --arg BASE "$HOME/vault" "$JSON")"
 echo $JSON > "$HOME/.config/obsidian/obsidian.json"
+EOF
+
+cd "$ROOT/打开"
+cat > Obsidian.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Terminal=false
+Name=Obsidian
+Exec=obsidian
+Icon=Obsidian
 EOF
 
 cd "$ROOT/数据"

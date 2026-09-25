@@ -13,8 +13,93 @@ typeset -A 运行路径
 
 cd "$ROOT"
 mkdir --parents 数据
+mkdir --parents 配置
 
 cd "$ROOT/临时"
 chmod +x Steam.AppImage
+
+cd "$ROOT/配置"
+cat > steam << 'OUT'
+
+DATA="${DATA:-$PWD}"
+
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="$DATA/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+
+Steam="$HOME/.steam/steam"
+SteamApps="$Steam/steamapps"
+
+Icons="$XDG_DATA_HOME/icons"
+Applications="$XDG_DATA_HOME/applications"
+
+rm --recursive --force "$Icons"
+rm --recursive --force "$Applications"
+
+mkdir --parent "$DATA/icons"
+mkdir --parent "$DATA/applications"
+mkdir --parent "$DATA/steamapps"
+
+ln --symbolic --force --no-dereference "$DATA/icons" "$Icons"
+ln --symbolic --force --no-dereference "$DATA/applications" "$Applications"
+
+cat > "$DATA/.desktop" << EOF
+[Desktop Entry]
+Type=Application
+Exec=steam steam://open/games
+
+EOF
+
+cat > "$DATA/.directory" << EOF
+[Desktop Entry]
+Type=Directory
+Icon=./icons/hicolor/scalable/apps/steam_icon_*
+EOF
+
+cat > "$SteamApps/libraryfolders.vdf" << EOF
+"libraryfolders"
+{
+	"0"
+	{
+		"path"		"$Steam"
+		"label"		""
+		"contentid"		""
+		"totalsize"		"0"
+		"update_clean_bytes_tally"		"0"
+		"time_last_update_verified"		"0"
+		"apps"
+		{
+		}
+	}
+	"1"
+	{
+		"path"		"$DATA"
+		"label"		""
+		"contentid"		""
+		"totalsize"		"0"
+		"update_clean_bytes_tally"		"0"
+		"time_last_update_verified"		"0"
+		"apps"
+		{
+		}
+	}
+}
+EOF
+
+Hicolor="$Icons/hicolor"
+Scalable="$Hicolor/scalable"
+if [ ! -d "$Scalable" ]; then
+    [ -e "$Hicolor/16x16" ] && ln --symbolic  --force --no-dereference "16x16" "$Scalable"
+    [ -e "$Hicolor/32x32" ] && ln --symbolic  --force --no-dereference "32x32" "$Scalable"
+    [ -e "$Hicolor/48x48" ] && ln --symbolic  --force --no-dereference "48x48" "$Scalable"
+    [ -e "$Hicolor/64x64" ] && ln --symbolic  --force --no-dereference "64x64" "$Scalable"
+    [ -e "$Hicolor/128x128" ] && ln --symbolic  --force --no-dereference "128x128" "$Scalable"
+    [ -e "$Hicolor/160x160" ] && ln --symbolic  --force --no-dereference "160x160" "$Scalable"
+    [ -e "$Hicolor/256x256" ] && ln --symbolic  --force --no-dereference "256x256" "$Scalable"
+fi
+
+
+OUT
 
 }

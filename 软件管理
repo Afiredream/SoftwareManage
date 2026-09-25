@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/env ksh
 
 运行命令="$1"
 
@@ -75,6 +75,8 @@ fi
 
 if [[ "${运行命令}" == "装载" ]];then
 
+    typeset -A 资源链接
+    typeset -A 运行路径
     软件名称="$2"
     依赖路径="${软件依赖}/${软件名称}"
     Home=$(eval echo ~$USER)
@@ -91,7 +93,10 @@ if [[ "${运行命令}" == "装载" ]];then
     mkdir --parents "$ROOT"
     mkdir --parents "${临时目录}"
     
-
+    打开方式="$Home/软件/打开方式"
+    ln --symbolic --force --relative --no-dereference "${打开方式}" "$ROOT/打开"
+    软件图标="$Home/软件/图标主题/icons"
+    ln --symbolic --force --relative --no-dereference "${软件图标}" "$ROOT/图标"
     cd "${临时目录}"
 
     if [[ "${软件版本}" != "$(cat "$ROOT/版本")" ]];then
@@ -110,10 +115,11 @@ if [[ "${运行命令}" == "装载" ]];then
         ln --symbolic --force --relative "${运行目录}/${运行命令}" "$Home/软件/软件运行/${运行命令}"
     done
 
+    终端方式=${终端方式-:dash}
     mkdir --parents "$ROOT/运行"
     for 文件名称 in "${!运行路径[@]}"; do
         相对路径="${运行路径[${文件名称}]}"
-        echo '#!/bin/env dash' > "$ROOT/运行/${文件名称}"
+        echo '#!/bin/env '${终端方式} > "$ROOT/运行/${文件名称}"
         echo 'FILE="$(realpath "$0")"' >> "$ROOT/运行/${文件名称}"
         echo 'ROOT="$(dirname "$FILE")"' >> "$ROOT/运行/${文件名称}"
         echo 'ROOT="$(dirname "$ROOT")"' >> "$ROOT/运行/${文件名称}"
@@ -144,6 +150,8 @@ if [[ "${运行命令}" == "装载" ]];then
 
 
     echo "${软件版本}" > "$ROOT/版本"
+    rm --force "$ROOT/打开"
+    rm --force "$ROOT/图标"
 
 fi
 
@@ -182,6 +190,6 @@ if [[ "${运行命令}" == "全部更新" ]];then
     软件列表="$HOME/软件/软件仓库"
     cd "${软件列表}"
     for 软件名称 in *; do
-        软件管理 依赖 "${软件名称}"
+        软件管理 装载 "${软件名称}"
     done
 fi  
