@@ -1,10 +1,10 @@
 #!/bin/env ksh
 
-软件名称=dash
-软件版本=0.5.13.5
+软件名称=bash
+软件版本=5.3
 
-终端命令=(dash)
-资源链接[dash.tar.gz]=http://gondor.apana.org.au/~herbert/dash/files/dash-0.5.13.5.tar.gz
+终端命令=(bash)
+资源链接[bash.tar.gz]=https://ftp.gnu.org/gnu/bash/bash-5.3.tar.gz
 
 
 配置部署() {
@@ -14,8 +14,8 @@ mkdir --parents 容器
 mkdir --parents 运行
 
 cd "$ROOT/临时"
-tar --extract --file dash.tar.gz
-mv --force --no-target-directory dash-* "$ROOT/代码"
+tar --extract --file bash.tar.gz
+mv --force --no-target-directory bash-* "$ROOT/代码"
 
 cd "$ROOT/代码"
 ./configure --prefix=/
@@ -23,7 +23,7 @@ make --jobs=$(nproc)
 make install DESTDIR="$ROOT/容器"
 
 cd "$ROOT/容器"
-mv --force bin/dash "$ROOT/运行"
+mv --force bin/bash "$ROOT/运行"
 
 cd "$ROOT"
 rm --recursive --force 代码

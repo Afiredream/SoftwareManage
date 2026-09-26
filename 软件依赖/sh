@@ -1,0 +1,31 @@
+#!/bin/env ksh
+
+软件名称=sh
+软件版本=0.5.13.5
+
+终端命令=(sh)
+资源链接[sh.tar.gz]=https://codeberg.org/schilytools/schilytools/archive/2024-03-21.tar.gz
+
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 容器
+mkdir --parents 运行
+
+cd "$ROOT/临时"
+tar --extract --file sh.tar.gz
+mv --force --no-target-directory schilytools "$ROOT/代码"
+
+cd "$ROOT/代码"
+make --jobs=$(nproc) CFLAGS="-Wno-error=incompatible-pointer-types"
+make install DESTDIR="$ROOT/容器"
+
+# cd "$ROOT/容器"
+# mv --force bin/sh "$ROOT/运行"
+
+# cd "$ROOT"
+# rm --recursive --force 代码
+# rm --recursive --force 容器
+
+}

@@ -115,7 +115,7 @@ if [[ "${运行命令}" == "装载" ]];then
         ln --symbolic --force --relative "${运行目录}/${运行命令}" "$Home/软件/软件运行/${运行命令}"
     done
 
-    终端方式=${终端方式-:dash}
+    终端方式=${终端方式:-dash}
     mkdir --parents "$ROOT/运行"
     for 文件名称 in "${!运行路径[@]}"; do
         相对路径="${运行路径[${文件名称}]}"
