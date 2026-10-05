@@ -20,14 +20,21 @@ chmod +x ${软件名称}.AppImage
 cp --force --dereference squashfs-root/.DirIcon "$ROOT/图标/${软件名称}.$(file --extension --brief squashfs-root/.DirIcon)"
 rm --recursive --force squashfs-root
 
-cd "$ROOT/打开"
-cat > ${软件名称}.desktop << EOF
+cd "$ROOT/系统"
+cat > autostart/${软件名称}.desktop << TEXT
 [Desktop Entry]
 Type=Application
-Terminal=false
 Name=${软件名称}
 Exec=${软件名称}
 Icon=${软件名称}
-EOF
+TEXT
+cat > applications/${软件名称}.desktop << TEXT
+[Desktop Entry]
+Type=Application
+Name=${软件名称}
+Exec=${软件名称}
+Icon=${软件名称}
+TEXT
+
 
 }

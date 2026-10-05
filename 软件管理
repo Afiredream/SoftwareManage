@@ -93,10 +93,11 @@ if [[ "${运行命令}" == "装载" ]];then
     mkdir --parents "$ROOT"
     mkdir --parents "${临时目录}"
     
-    打开方式="$Home/软件/打开方式"
-    ln --symbolic --force --relative --no-dereference "${打开方式}" "$ROOT/打开"
+    打开方式="$Home/.local/share/applications"
+    ln --symbolic --force --no-dereference "${打开方式}" "$ROOT/打开"
     软件图标="$Home/软件/图标主题/icons"
     ln --symbolic --force --relative --no-dereference "${软件图标}" "$ROOT/图标"
+    ln --symbolic --force --relative --no-dereference "$Home/软件/系统配置" "$ROOT/系统"
     cd "${临时目录}"
 
     if [[ "${软件版本}" != "$(cat "$ROOT/版本")" ]];then
@@ -107,7 +108,13 @@ if [[ "${运行命令}" == "装载" ]];then
         [[ -z "${文件名称}" ]] && continue
         文件链接="${资源链接[${文件名称}]}"
         [[ -z "${文件链接}" ]] && continue
-        [[ -f "${文件名称}" ]] || wget --output-document="${文件名称}" "${文件链接}"
+        [[ -f "${文件名称}" ]] || wget --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+                                --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+                                --header="Accept-Language: zh-CN,zh;q=0.9" \
+                                --header="Referer: https://www.todesk.com/linux.html" \
+                                --no-cookies \
+                                --output-document="${文件名称}" \
+                                 "${文件链接}"
     done
 
     配置部署
@@ -119,6 +126,11 @@ if [[ "${运行命令}" == "装载" ]];then
     mkdir --parents "$ROOT/运行"
     for 文件名称 in "${!运行路径[@]}"; do
         相对路径="${运行路径[${文件名称}]}"
+        if [[ "${相对路径}" == /* ]]; then
+            绝对路径="${相对路径}"
+        else
+            绝对路径='$ROOT/'"${相对路径}"
+        fi
         echo '#!/bin/env '${终端方式} > "$ROOT/运行/${文件名称}"
         echo 'FILE="$(realpath "$0")"' >> "$ROOT/运行/${文件名称}"
         echo 'ROOT="$(dirname "$FILE")"' >> "$ROOT/运行/${文件名称}"
@@ -137,11 +149,11 @@ if [[ "${运行命令}" == "装载" ]];then
         [[ -e "$ROOT/数据" ]] && echo 'export HOME="$ROOT/数据"' >> "$ROOT/运行/${文件名称}"
         [[ -f "$ROOT/配置/${文件名称}" ]] && echo '. "$ROOT/配置/$NAME"' >> "$ROOT/运行/${文件名称}"
         if [[ -f "$ROOT/钩子/${文件名称}" ]];then
-            echo '"$ROOT/'${相对路径}'" "$@"' >> "$ROOT/运行/${文件名称}"
+            echo ${绝对路径}'" "$@"' >> "$ROOT/运行/${文件名称}"
             echo '. "$ROOT/钩子/$NAME"' >> "$ROOT/运行/${文件名称}"
         else
-            [[ -z "${运行方式}" ]] && echo 'exec "$ROOT/'${相对路径}'" "$@"' >> "$ROOT/运行/${文件名称}"
-            [[ -n "${运行方式}" ]] && echo 'exec '${运行方式}' "$ROOT/'${相对路径}'" "$@"' >> "$ROOT/运行/${文件名称}"
+            [[ -z "${运行方式}" ]] && echo 'exec "'${绝对路径}'" "$@"' >> "$ROOT/运行/${文件名称}"
+            [[ -n "${运行方式}" ]] && echo 'exec '${运行方式}' "'${绝对路径}'" "$@"' >> "$ROOT/运行/${文件名称}"
             
         fi
         chmod +x "$ROOT/运行/${文件名称}"
@@ -149,7 +161,7 @@ if [[ "${运行命令}" == "装载" ]];then
 
 
 
-    echo "${软件版本}" > "$ROOT/版本"
+    [[ -n "${软件版本}" ]] && echo "${软件版本}" > "$ROOT/版本"
     rm --force "$ROOT/打开"
     rm --force "$ROOT/图标"
 

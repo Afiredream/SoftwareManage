@@ -22,13 +22,13 @@ mv GE-Proton* "$ROOT/软件"
 
 cd "$ROOT/配置"
 cat > proton-ge <<'EOF'
-mkdir --parents "$PREFIX"
-mkdir --parents "$PREFIX/drive_c/users"
-export STEAM_COMPAT_DATA_PATH="$PREFIX"
+mkdir --parents "$WINEPREFIX"
+mkdir --parents "$WINEPREFIX/drive_c/users"
+export STEAM_COMPAT_DATA_PATH="$WINEPREFIX"
 export STEAM_COMPAT_CLIENT_INSTALL_PATH=/
-ln --symbolic --force --relative --no-dereference "$PREFIX" "$PREFIX/pfx"
-ln --symbolic --force --relative --no-dereference "$PREFIX/drive_c/users/Public" "$PREFIX/drive_c/users/steamuser"
-set -- runinprefix "$@"
+ln --symbolic --force --relative --no-dereference "$WINEPREFIX" "$WINEPREFIX/pfx"
+ln --symbolic --force --relative --no-dereference "$WINEPREFIX/drive_c/users/Public" "$WINEPREFIX/drive_c/users/steamuser"
+set -- run "$@"
 EOF
 
 }

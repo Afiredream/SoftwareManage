@@ -1,0 +1,51 @@
+#!/bin/ksh
+
+软件名称=ClashVergeRev
+软件版本=2.5.7
+
+资源链接[${软件名称}.deb]=https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.7/Clash.Verge_2.5.7_amd64.deb
+终端命令=(${软件名称})
+运行路径[${软件名称}]=软件/clash-verge
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 数据
+mkdir --parents 容器
+mkdir --parents 配置
+
+cd "$ROOT/临时"
+ar x ${软件名称}.deb
+tar --extract --file data.tar.* --directory "$ROOT/容器"
+cp "$ROOT/容器/usr/share/icons/hicolor/256x256@2/apps/clash-verge.png" "$ROOT/系统/icons/${软件名称}.png"
+rm --force data.tar.*
+rm --force control.tar.*
+rm --force debian-binary
+
+cd "$ROOT/配置"
+cat > ${软件名称} << 'TEXT'
+export HOME="/tmp/$NAME"
+ln --symbolic --force --no-dereference "$ROOT/数据" "/tmp/$NAME"
+TEXT
+
+cd "$ROOT/系统"
+cat > autostart/${软件名称}.desktop << TEXT
+[Desktop Entry]
+Type=Application
+Name=${软件名称}
+Exec=${软件名称}
+Icon=${软件名称}
+TEXT
+cat > applications/${软件名称}.desktop << TEXT
+[Desktop Entry]
+Type=Application
+Name=${软件名称}
+Exec=${软件名称}
+Icon=${软件名称}
+TEXT
+
+cd "$ROOT"
+ln --symbolic --force --relative --no-dereference 容器/usr/bin 软件
+
+
+}

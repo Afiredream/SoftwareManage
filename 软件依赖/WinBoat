@@ -13,9 +13,13 @@ typeset -A 资源链接
 资源链接[MicrosoftVisualC++08.exe]=https://download.microsoft.com/download/4/a/2/4a22001f-fa3b-4c13-bf4e-42ec249d51c4/vcredist_x64.exe
 资源链接[DirectX.exe]=https://download.microsoft.com/download/8/4/a/84a35bf1-dafe-4ae8-82af-ad2ae20b6b14/directx_Jun2010_redist.exe
 资源链接[SandboxiePlus.exe]=https://github.com/sandboxie-plus/Sandboxie/releases/download/v1.18.4/Sandboxie-Plus-x64-v1.18.4.exe
-终端命令=(winboat)
+资源链接[DotNetDesktopRuntime.7.0.20.Amd64.exe]=https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/7.0.20/windowsdesktop-runtime-7.0.20-win-x64.exe
+资源链接[DotNetDesktopRuntime.7.0.2.Amd64.exe]=https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/7.0.2/windowsdesktop-runtime-7.0.2-win-x64.exe
+资源链接[DotNetDesktopRuntime.7.0.20.Intel32.exe]=https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/7.0.20/windowsdesktop-runtime-7.0.20-win-x86.exe
+资源链接[DotNetDesktopRuntime.7.0.2.Intel32.exe]=https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/7.0.2/windowsdesktop-runtime-7.0.2-win-x86.exe
+终端命令=(WinBoat)
 typeset -A 运行路径
-运行路径[winboat]=临时/WinBoat.AppImage
+运行路径[WinBoat]=临时/WinBoat.AppImage
 
 配置部署() {
 
@@ -28,16 +32,15 @@ cd "$ROOT/临时"
 chmod +x WinBoat.AppImage
 
 cd "$ROOT/配置"
-cat > winboat <<'EOF'
+cat > WinBoat <<'EOF'
 cd "$HOME/.winboat"
 export DATA="${DATA:-$ROOT/临时}"
 podman-compose up --detach
-export ELECTRON_OZONE_PLATFORM_HINT=x11
-set -- "$@" --ozone-platform=x11
 EOF
 
 cd "$ROOT/钩子"
-cat > winboat <<'EOF'
+cat > WinBoat <<'EOF'
+cd "$HOME/.winboat"
 podman-compose stop
 EOF
 

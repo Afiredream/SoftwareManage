@@ -19,7 +19,7 @@ mkdir --parents 配置
 cd "$ROOT/临时"
 ar x ${软件名称}.deb
 tar --extract --file data.tar.* --directory "$ROOT/容器"
-cp --force "$ROOT/容器/opt/apps/com.alibabainc.dingtalk/files/logo.ico" "$ROOT/图标/${软件名称}.ico"
+magick "$ROOT/容器/opt/apps/com.alibabainc.dingtalk/files/logo.ico[0]" "$ROOT/图标/${软件名称}.png"
 ln --symbolic --force --relative --no-dereference "$ROOT/容器"/opt/apps/com.alibabainc.dingtalk/files/*-Release.* "$ROOT/软件"
 patchelf --clear-execstack "$ROOT/软件/dingtalk_dll.so"
 rm --force data.tar.*
@@ -35,14 +35,21 @@ export LD_LIBRARY_PATH=/lib
 cd "$ROOT/软件"
 EOF
 
-cd "$ROOT/打开"
-cat > ${软件名称}.desktop << EOF
+cd "$ROOT/系统"
+cat > autostart/${软件名称}.desktop << TEXT
 [Desktop Entry]
 Type=Application
-Terminal=false
 Name=${软件名称}
 Exec=${软件名称}
 Icon=${软件名称}
-EOF
+TEXT
+cat > applications/${软件名称}.desktop << TEXT
+[Desktop Entry]
+Type=Application
+Name=${软件名称}
+Exec=${软件名称}
+Icon=${软件名称}
+TEXT
+
 
 }

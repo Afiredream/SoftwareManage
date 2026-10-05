@@ -3,8 +3,9 @@
 软件名称=ksh
 软件版本=5.3
 
-终端命令=(ksh)
+终端命令=(ksh shcomp)
 运行路径[ksh]=容器/bin/ksh
+运行路径[shcomp]=容器/bin/shcomp
 资源链接[ksh.tar.gz]=https://github.com/ksh93/ksh/archive/refs/tags/v1.0.10.tar.gz
 
 
