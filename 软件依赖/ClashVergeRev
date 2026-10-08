@@ -13,6 +13,7 @@ cd "$ROOT"
 mkdir --parents 数据
 mkdir --parents 容器
 mkdir --parents 配置
+mkdir --parents 钩子
 
 cd "$ROOT/临时"
 ar x ${软件名称}.deb
@@ -27,6 +28,7 @@ cat > ${软件名称} << 'TEXT'
 export HOME="/tmp/$NAME"
 ln --symbolic --force --no-dereference "$ROOT/数据" "/tmp/$NAME"
 TEXT
+
 
 cd "$ROOT/系统"
 cat > autostart/${软件名称}.desktop << TEXT

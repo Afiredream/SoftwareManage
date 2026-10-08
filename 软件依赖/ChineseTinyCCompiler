@@ -1,0 +1,25 @@
+#!/bin/ksh
+
+软件名称=ChineseTinyCCompiler
+
+终端命令=(tcc)
+运行路径[tcc]=容器/tcc
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 代码
+mkdir --parents 容器
+rm --recursive --force 配置
+rm --recursive --force 数据
+rm --recursive --force 临时
+
+cd "$ROOT/代码"
+[[ -e .git ]] || git clone https://github.com/Afiredream/ChineseTinyCCompiler.git .
+[[ -e .git ]] && git pull
+./configure --prefix=/
+make
+make install DESTDIR="$ROOT/容器"
+git clean --force --directories -x
+
+}
