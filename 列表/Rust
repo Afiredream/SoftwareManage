@@ -1,13 +1,13 @@
 #!/bin/ksh
 
-软件名称=rust
-软件版本=0
+软件名称=Rust
 
-typeset -A 资源链接
-资源链接[sh.rustup.rs]=https://sh.rustup.rs
-终端命令=(cargo)
-typeset -A 运行路径
+终端命令=(cargo rustc rustup)
+运行路径[rustc]=数据/.cargo/bin/rustc
 运行路径[cargo]=数据/.cargo/bin/cargo
+运行路径[rustup]=数据/.cargo/bin/rustup
+资源链接[sh.rustup.rs]=https://sh.rustup.rs
+
 
 配置部署() {
 

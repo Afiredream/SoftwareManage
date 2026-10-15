@@ -1,0 +1,22 @@
+#!/bin/ksh
+
+软件名称=bun
+软件版本=0
+
+typeset -A 资源链接
+资源链接[install]=https://bun.sh/install
+终端命令=(bun)
+typeset -A 运行路径
+运行路径[bun]=数据/.bun/bin/bun
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 数据
+
+cd "$ROOT/临时"
+chmod +x install
+export HOME="$ROOT/数据"
+./install
+
+}

@@ -1,0 +1,87 @@
+#!/bin/env zsh
+
+软件="$*"
+文件="$0"
+数据=$(eval 回显 ~$USER)
+运行="$(dirname "${文件}")"
+目录="$(dirname "${运行}")"
+名称="$(basename "${文件}")"
+
+
+导出 PATH="${目录}/脚本:$PATH"
+导出 ROOT="${数据}/软件/软件仓库/${软件}"
+
+typeset -A 资源链接
+typeset -A 运行路径
+
+如果 [[ -e "${目录}/列表/${软件}" ]]; 那么
+    导入 "${目录}/列表/${软件}"
+否则
+    echo "数据仓库没有这个软件:${软件}" 
+    exit 0
+结束
+
+mkdir --parents "$ROOT"
+ln --symbolic --force --relative --no-dereference "${数据}/软件/系统配置" "$ROOT/系统"
+    
+
+for 文件名称 in "${!资源链接[@]}"; do
+    cd "$ROOT/临时"
+    [[ -z "${文件名称}" ]] && 继续
+    文件链接="${资源链接[${文件名称}]}"
+    [[ -z "${文件链接}" ]] && 继续
+    curl \
+        --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+        --header "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+        --header "Accept-Language: zh-CN,zh;q=0.9" \
+        --header "Referer: https://www.todesk.com/linux.html" \
+        --location \
+        --output "${文件名称}" \
+        "${文件链接}"
+done
+
+软件装载
+
+对于 文件名称 in "${!运行路径[@]}"; do
+    mkdir --parents "$ROOT/运行"
+    相对路径="${运行路径[${文件名称}]}"
+    if [[ "${相对路径}" == /* ]]; then
+        绝对路径='"'"${相对路径}"'"'
+    elif [[ -z "${相对路径}" ]]; then
+        绝对路径=
+    else
+        绝对路径='"$ROOT/'"${相对路径}"'"'
+    fi
+    echo '#!/bin/env zsh' > "$ROOT/运行/${文件名称}"
+    echo '文件="$(realpath "$0")"' >> "$ROOT/运行/${文件名称}"
+    echo '运行="$(dirname "$文件")"' >> "$ROOT/运行/${文件名称}"
+    echo '目录="$(dirname "$运行")"' >> "$ROOT/运行/${文件名称}"
+    echo '列表="$(dirname "$目录")"' >> "$ROOT/运行/${文件名称}"
+    echo '名称="$(basename "$文件")"' >> "$ROOT/运行/${文件名称}"
+    for 软件名称 in "${运行依赖[@]}"; do
+        [[ -z "${软件名称}" ]] && continue
+        echo '导出 PATH="$LIST/'${软件名称}'/运行:$PATH"' >> "$ROOT/运行/${文件名称}"
+    done
+    for 软件名称 in "${动态链接[@]}"; do
+    [[ -z "${软件名称}" ]] && continue
+        echo '导出 LD_LIBRARY_PATH="$LIST/'${软件名称}'/共享:$LD_LIBRARY_PATH"' >> "$ROOT/运行/${文件名称}"
+    done
+    [[ -d "$ROOT/容器/lib" ]] && echo 'export LD_LIBRARY_PATH="$ROOT/容器/lib:$LD_LIBRARY_PATH"' >> "$ROOT/运行/${文件名称}"
+    [[ -e "$ROOT/数据" ]] && echo 'export HOME="$ROOT/数据"' >> "$ROOT/运行/${文件名称}"
+    [[ -f "$ROOT/配置/${文件名称}" ]] && echo '. "$ROOT/配置/$NAME"' >> "$ROOT/运行/${文件名称}"
+    如果 [[ -f "$ROOT/钩子/${文件名称}" ]];then
+        echo ${绝对路径}' "$@"' >> "$ROOT/运行/${文件名称}"
+        echo '. "$ROOT/钩子/$NAME"' >> "$ROOT/运行/${文件名称}"
+    或者
+        [[ -z "${运行方式}" ]] && 回显 '运行 '${绝对路径}' "$@"' >> "$ROOT/运行/${文件名称}"
+        [[ -n "${运行方式}" ]] && 回显 '运行 '${运行方式}' '${绝对路径}' "$@"' >> "$ROOT/运行/${文件名称}"
+
+    fi
+    chmod +x "$ROOT/运行/${文件名称}"
+done
+
+对于 运行名称 in "${运行列表[@]}"; do
+    ln --symbolic --force --relative "$ROOT/运行/${运行名称}" "${数据}/软件/软件运行/${运行名称}"
+done
+
+[[ -n "${软件版本}" ]] && 回显 "${软件版本}" > "$ROOT/版本"

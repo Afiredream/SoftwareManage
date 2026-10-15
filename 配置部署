@@ -1,11 +1,21 @@
-#!/bin/sh
+#!/bin/env bash
 
-[ -e "$HOME/软件" ] && { echo 目录存在无法安装:$HOME/软件;exit; }
+[ -e "$HOME/软件/软件管理" ] && { echo 目录存在无法安装:$HOME/软件/软件管理; exit; }
 
 mkdir --parents "$HOME/软件"
 mkdir --parents "$HOME/软件/软件运行"
 mkdir --parents "$HOME/软件/软件仓库"
-mkdir --parents "$HOME/软件/软件管理"
+mkdir --parents "$HOME/软件/系统配置"
+mv --force "$(dirname "$0")" "$HOME/软件/软件管理"
 
-cp --recursive --force "$(dirname "$0")/." "$HOME/软件/软件管理"
-ln --symbolic --force --relative "$HOME/软件/软件管理/软件管理" "$HOME/软件/软件运行/软件管理"
+ln --symbolic --force --relative "$HOME/软件/软件管理/运行/git" "$HOME/软件/软件运行/git"
+ln --symbolic --force --relative "$HOME/软件/软件管理/运行/zsh" "$HOME/软件/软件运行/zsh"
+ln --symbolic --force --relative "$HOME/软件/软件管理/运行/curl" "$HOME/软件/软件运行/curl"
+ln --symbolic --force --relative "$HOME/软件/软件管理/运行/软件管理" "$HOME/软件/软件运行/软件管理"
+ln --symbolic --force --relative "$HOME/软件/软件管理/运行/软件装载" "$HOME/软件/软件运行/软件装载"
+ln --symbolic --force --relative "$HOME/软件/软件管理/运行/软件卸载" "$HOME/软件/软件运行/软件卸载"
+ln --symbolic --force --relative "$HOME/软件/软件管理/运行/软件更新" "$HOME/软件/软件运行/软件更新"
+
+ln --symbolic --force --relative "$HOME/.local/share/icons" "$HOME/软件/系统配置/icons"
+ln --symbolic --force --relative "$HOME/.config/autostart" "$HOME/软件/系统配置/autostart"
+ln --symbolic --force --relative "$HOME/.local/share/applications" "$HOME/软件/系统配置/applications"

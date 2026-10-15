@@ -1,0 +1,27 @@
+#!/bin/ksh
+
+软件名称=DeepseekHarness
+软件版本=0.1.7
+
+终端命令=(dsh)
+运行路径[dsh]=软件/node_modules/.bin/dsh
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 软件
+mkdir --parents 数据
+mkdir --parents 配置
+rm --recursive --force 代码
+
+cd "$ROOT/软件"
+npm install @deepseek-ai/dsh@latest
+npm prune
+
+cd "$ROOT/配置"
+cat > dsh << 'TEXT'
+export DSH_DEFAULT_WORKSPACE="$PWD"
+export PATH="$ROOT/软件/node_modules/.bin:$PATH"
+TEXT
+
+}

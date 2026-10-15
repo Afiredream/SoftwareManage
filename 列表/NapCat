@@ -1,0 +1,47 @@
+#!/bin/ksh
+
+软件名称=NapCat
+软件版本=4.18.19
+
+终端命令=(napcat)
+运行路径[napcat]=临时/NapCat.AppImage
+动态链接=(systemd)
+资源链接[NapCat.AppImage]=https://github.com/NapNeko/NapCatAppImageBuild/releases/download/v4.18.19/QQ-50969_NapCat-v4.18.19-amd64.AppImage
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 数据
+mkdir --parents 配置
+
+cd "$ROOT/临时"
+chmod +x NapCat.AppImage
+
+cd "$ROOT/配置"
+cat > napcat << 'EOF'
+cd "$ROOT/数据"
+caddy start
+caddy reload --force
+export NAPCAT_WEBUI_SECRET_KEY=NapCat
+export NAPCAT_QUICK_ACCOUNT=2541640153
+export NAPCAT_QUICK_PASSWORD=Zhangkenan040906
+EOF
+
+cd "$ROOT/数据"
+cat > Caddyfile << 'EOF'
+{
+    auto_https off
+}
+http://stapxs.localhost:80 {
+    @path path /webui/* /api/* /plugin/napcat-plugin-ssqq/page/dashboard*
+    handle @path {
+        reverse_proxy 127.0.0.1:6099
+    }
+    handle {
+        rewrite * /plugin/napcat-plugin-ssqq/page/dashboard{uri}
+        reverse_proxy 127.0.0.1:6099
+    }
+}
+EOF
+
+}

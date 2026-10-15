@@ -1,0 +1,30 @@
+#!/bin/ksh
+
+软件名称=Bcause
+
+终端命令=(bcause)
+运行路径[bcause]=容器/bin/bcause
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 代码
+mkdir --parents 配置
+mkdir --parents 容器
+mkdir --parents 容器/bin
+mkdir --parents 容器/lib64
+
+cd "$ROOT/代码"
+[[ -e .git ]] || git clone https://github.com/Spydr06/BCause.git .
+[[ -e .git ]] && git pull
+make --jobs=$(nproc)
+make install SYSROOT="$ROOT/容器"
+make clean
+
+cd "$ROOT/配置"
+cat > bcause << 'TEXT'
+[ -z "$*" ] && set -- --help
+ set -- -L"$ROOT/容器/lib64" "$@"
+TEXT
+
+}

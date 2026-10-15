@@ -1,0 +1,4 @@
+#!/bin/env bash
+FILE="$0"
+ROOT="$(dirname "$FILE")"
+exec "$ROOT/软件" "$@"

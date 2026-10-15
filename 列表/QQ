@@ -1,0 +1,51 @@
+#!/bin/ksh
+
+软件名称=QQ
+软件版本=3.2.33
+
+资源链接[${软件名称}.AppImage]="https://qqdl.gtimg.cn/qqfile/QQNTV2/9.9.35/release/1763096b/QQ_3.2.33_260902_x86_64_01.AppImage?sign=1562218381d175219b22b5df90425879&t=1790096647"
+运行路径[${软件名称}]=临时/${软件名称}.AppImage
+终端方式=bash
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 数据
+mkdir --parents 配置
+mkdir --parents 钩子
+
+cd "$ROOT/临时"
+chmod +x ${软件名称}.AppImage
+./${软件名称}.AppImage --appimage-extract
+cp --force --dereference squashfs-root/.DirIcon "$ROOT/图标/${软件名称}.$(file --extension --brief squashfs-root/.DirIcon)"
+rm --recursive --force squashfs-root
+
+cd "$ROOT/配置"
+cat > ${软件名称} << 'TEXT'
+export QT_IM_MODULE=fcitx
+export GTK_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+set -- "$@" --enable-wayland-ime --ozone-platform-hint=auto
+TEXT
+
+cd "$ROOT/钩子"
+cat > ${软件名称} << 'TEXT'
+TEXT
+
+cd "$ROOT/系统"
+cat > autostart/${软件名称}.desktop << TEXT
+[Desktop Entry]
+Type=Application
+Name=${软件名称}
+Exec=${软件名称}
+Icon=${软件名称}
+TEXT
+cat > applications/${软件名称}.desktop << TEXT
+[Desktop Entry]
+Type=Application
+Name=${软件名称}
+Exec=${软件名称}
+Icon=${软件名称}
+TEXT
+
+}

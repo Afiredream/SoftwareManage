@@ -1,0 +1,32 @@
+#!/bin/ksh
+
+软件名称=ChineseTinyCompiler
+
+终端命令=(代码运行器:C tcc)
+运行路径[tcc]=容器/bin/tcc
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 代码
+mkdir --parents 容器
+rm --recursive --force 配置
+rm --recursive --force 数据
+rm --recursive --force 临时
+
+cd "$ROOT/代码"
+同步仓库 https://github.com/Afiredream/ChineseTinyCompiler.git
+./configure --prefix=/
+make --jobs=$(nproc)
+make install DESTDIR="$ROOT/容器"
+make clean
+
+cd "$ROOT/运行"
+touch 代码运行器:C
+chmod +x 代码运行器:C
+cat > 代码运行器:C << 'TEXT'
+#!/bin/env dash
+exec tcc -run "$@"
+TEXT
+
+}

@@ -1,0 +1,35 @@
+#!/bin/ksh
+
+软件名称=FlexNote
+
+运行方式=wine
+终端命令=(FlexNote)
+运行路径[FlexNote]=数据/Desktop/FlexNote.lnk
+资源链接[FlexNote.exe]=https://cdn.myflexnote.com/FlexNote%20Setup%201.1.53.exe
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 容器
+mkdir --parents 配置
+mkdir --parents 数据
+
+cd "$ROOT/容器"
+mkdir --parents drive_c/users
+ln --symbolic --force --relative --no-dereference "$ROOT/数据" drive_c/users/Public
+
+cd "$ROOT/临时"
+export USER=Public
+export WINEPREFIX="$ROOT/容器"
+export WINEDLLOVERRIDES="winemenubuilder.exe=d"
+winecfg
+wineserver --kill
+wine FlexNote.exe
+
+cd "$ROOT/配置"
+cat > FlexNote << 'EOF'
+export USER=Public
+export WINEPREFIX="$ROOT/容器"
+EOF
+
+}

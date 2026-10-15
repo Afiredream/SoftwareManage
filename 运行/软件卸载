@@ -1,0 +1,10 @@
+#!/bin/env zsh
+
+软件="$*"
+文件="$0"
+数据="$(eval echo ~$USER)"
+运行="$(dirname "${文件}")"
+目录="$(dirname "${运行}")"
+名称="$(basename "${文件}")"
+
+rm --recursive --force "${数据}/软件/软件仓库/${软件}"

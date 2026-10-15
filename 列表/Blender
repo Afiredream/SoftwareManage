@@ -1,0 +1,22 @@
+#!/bin/ksh
+
+软件名称=Blender
+软件版本=5.2.2
+
+typeset -A 资源链接
+资源链接[blender.tar.xz]=https://mirror.blender.org/release/Blender5.2/blender-5.2.2-linux-x64.tar.xz
+终端命令=(blender)
+typeset -A 运行路径
+运行路径[blender]=软件/blender
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 数据
+
+cd "$ROOT/临时"
+tar --extract --file blender.tar.xz --directory .
+cp --recursive --force --no-target-directory blender-* "$ROOT/软件"
+rm --recursive --force blender-*
+
+}

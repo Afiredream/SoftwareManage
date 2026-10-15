@@ -1,0 +1,28 @@
+#!/bin/ksh
+
+软件名称=B
+
+终端命令=(b)
+运行路径[b]=软件/b
+
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 代码
+mkdir --parents 配置
+rm --recursive --force 软件
+rm --recursive --force 容器
+
+cd "$ROOT/代码"
+[[ -e .git ]] || git clone https://github.com/bext-lang/b.git .
+[[ -e .git ]] && git pull
+make --jobs=$(nproc)
+mv build "$ROOT/软件"
+
+cd "$ROOT/配置"
+cat > b << 'TEXT'
+[ -z "$*" ] && set -- -help
+TEXT
+
+}

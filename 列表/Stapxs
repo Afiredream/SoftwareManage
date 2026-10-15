@@ -1,0 +1,42 @@
+#!/bin/ksh
+
+软件名称=Stapxs
+软件版本=3.5.0
+
+终端命令=(stapxs)
+运行路径[stapxs]=临时/Stapxs.AppImage
+资源链接[Stapxs.zip]=https://github.com/Stapxs/Stapxs-QQ-Lite-2.0/releases/download/v3.5.0/Stapxs.QQ.Lite-3.5.0-web.zip
+
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 数据
+mkdir --parents 配置
+rm --recursive --force 软件
+rm --recursive --force 代码
+
+cd "$ROOT/临时"
+unzip -o Stapxs.zip
+mv dist "$ROOT/软件"
+
+cd "$ROOT/配置"
+cat > stapxs << 'EOF'
+cd "$ROOT/数据"
+caddy run
+EOF
+
+
+cd "$ROOT/数据"
+cat > Caddyfile << 'EOF'
+{
+    auto_https off
+}
+http://stapxs.localhost:80 {
+    root * ../软件
+    file_server
+}
+EOF
+
+
+}

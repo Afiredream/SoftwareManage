@@ -1,0 +1,10 @@
+#!/bin/env dash
+set -e
+if [ -e .git ]; then
+    branch=$(git rev-parse --abbrev-ref HEAD)
+    git fetch --depth=1 "origin" "$branch"
+    git reset --hard "origin/$branch"
+else
+    git clone --depth 1 --single-branch "$@" .
+fi
+git submodule update --init --recursive

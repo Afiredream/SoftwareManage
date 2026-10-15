@@ -1,0 +1,6 @@
+#!/bin/env bash
+FILE="$0"
+ROOT="$(dirname "$FILE")"
+export HOME="$ROOT/数据"
+export PATH="$ROOT/软件:$PATH"
+exec "$ROOT/软件/git" "$@"

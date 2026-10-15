@@ -1,0 +1,28 @@
+#!/bin/ksh
+
+软件名称=DshTui
+
+终端命令=(dsh-tui)
+运行方式=node
+运行路径[dsh-tui]=代码/lib/types/index.js
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 代码
+mkdir --parents 数据
+mkdir --parents 配置
+
+cd "$ROOT/代码"
+同步仓库 https://github.com/ccch1mneyyy/dsh-TUI.git
+pnpm add @deepseek-ai/dsh-app-boot --workspace-root --no-save
+pnpm install
+pnpm build
+
+cd "$ROOT/配置"
+cat > dsh-tui << 'TEXT'
+cd "$ROOT/代码"
+# set -- --import tsx/esm scripts/run.ts "$@"
+TEXT
+
+}

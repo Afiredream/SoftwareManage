@@ -1,0 +1,6 @@
+#!/bin/env bash
+FILE="$0"
+ROOT="$(dirname "$FILE")"
+export ZDOTDIR="$ROOT/数据"
+export ROOTDIR="$ROOT/容器"
+exec "$ROOT/容器/bin/zsh" "$@"

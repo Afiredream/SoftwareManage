@@ -1,0 +1,29 @@
+#!/bin/ksh
+
+软件名称=ChineseLlvmCompiler
+
+终端命令=(clang clang++)
+运行路径[clang]=容器/bin/clang
+运行路径[clang++]=容器/bin/clang++
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 代码
+mkdir --parents 容器
+rm --recursive --force 配置
+rm --recursive --force 数据
+rm --recursive --force 临时
+
+cd "$ROOT/代码"
+[[ -e .git ]] || git clone  --depth 1 --single-branch https://github.com/Afiredream/ChineseLlvmCompiler.git .
+[[ -e .git ]] && git pull --depth=1
+cmake -S llvm -B build -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DLLVM_ENABLE_PROJECTS="clang" \
+  -DLLVM_TARGETS_TO_BUILD="X86" \
+  -DCMAKE_INSTALL_PREFIX="$ROOT/容器"
+ninja -C build
+ninja -C build install
+
+}

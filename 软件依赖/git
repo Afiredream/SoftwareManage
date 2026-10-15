@@ -26,8 +26,9 @@ rm --recursive --force "$ROOT/代码"
 
 cd "$ROOT/配置"
 cat > git << 'EOF'
+export GIT_EXEC_PATH="$ROOT/容器/home/libexec/git-core"
 export PATH="$ROOT/容器/home/bin:$PATH"
-export PATH="$ROOT/容器/home/libexec/git-core:$PATH"
+export PATH="GIT_EXEC_PATH:$PATH"
 EOF
 
 }

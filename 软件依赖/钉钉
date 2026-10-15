@@ -36,6 +36,8 @@ cd "$ROOT/软件"
 for _ in {0..9}; do
     ping -c1 -W1 dingtalk.com && break
     sleep 1
+    ping -c1 -W1 dingtalk.com || continue
+    exit
 done
 TEXT
 

@@ -1,0 +1,20 @@
+#!/bin/ksh
+
+软件名称=crudini
+软件版本=0.9.6
+
+typeset -A 资源链接
+资源链接[crudini.tar.gz]=https://github.com/pixelb/crudini/releases/download/0.9.6/crudini-0.9.6.tar.gz
+终端命令=(crudini)
+
+配置部署() {
+cd "$ROOT/临时"
+mkdir --parents "$ROOT/代码"
+tar --extract --file crudini.tar.gz --directory "$ROOT/代码" 
+cd "$ROOT/代码/crudini-${软件版本}"
+make
+mkdir --parents "$ROOT/容器"
+make install DESTDIR="$ROOT/容器"
+# rm --recursive --force "$ROOT/代码"
+ln --symbolic --force --relative --no-dereference "$ROOT/容器/bin" "$ROOT/运行"
+}

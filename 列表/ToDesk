@@ -1,0 +1,53 @@
+#!/bin/ksh
+
+软件名称=ToDesk
+软件版本=4.9.6.0
+
+终端命令=(ToDesk)
+动态链接=(systemd)
+运行路径[ToDesk]=容器/opt/todesk/bin/ToDesk
+资源链接[ToDesk.deb]=https://dl.todesk.com/linux/todesk-v4.9.6.0-amd64.deb
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 数据
+mkdir --parents 容器
+mkdir --parents 配置
+mkdir --parents 钩子
+ln --symbolic --force --relative --no-dereference 容器/opt/todesk 软件
+
+cd "$ROOT/临时"
+ar x ToDesk.deb
+tar --extract --file data.tar.* --directory "$ROOT/容器"
+rm --force data.tar.*
+rm --force control.tar.*
+rm --force debian-binary
+
+cd "$ROOT/配置"
+cat > ToDesk << 'EOF'
+export LIBVA_DRIVER_NAME="iHD"
+export LIBVA_DRIVERS_PATH="$ROOT/软件/bin"
+# pidof ToDesk_Service && exit
+# sudo --background env LD_LIBRARY_PATH="$LD_LIBRARY_PATH" "$ROOT/软件/bin/ToDesk_Service"
+EOF
+
+cd "$ROOT/钩子"
+cat > ToDesk << 'EOF'
+# sudo pkill ToDesk_Service
+EOF
+
+cd "$ROOT/打开"
+cat > ToDesk.desktop << 'EOF'
+[Desktop Entry]
+Type=Application
+Terminal=false
+Name=ToDesk
+Exec=ToDesk
+Icon=ToDesk
+EOF
+
+cd "$ROOT"
+cp --force --dereference 容器/usr/share/icons/hicolor/512x512/apps/todesk.png 图标/ToDesk.png
+
+}

@@ -1,0 +1,47 @@
+#!/bin/ksh
+
+软件名称=systemd
+软件版本=262
+
+资源链接[systemd.tar.gz]=https://github.com/systemd/systemd/archive/refs/tags/v262.tar.gz
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 容器
+
+cd "$ROOT"
+rm --recursive --force 代码
+
+cd "$ROOT/临时"
+tar --extract --file systemd.tar.gz --directory .
+mv --force --no-target-directory systemd-* "$ROOT/代码"
+
+cd "$ROOT/代码"
+mkdir --parents build
+cd build
+meson setup --prefix=/ \
+            --buildtype=release \
+            -D default-dnssec=no \
+            -D firstboot=false \
+            -D install-tests=false \
+            -D ldconfig=false \
+            -D man=disabled \
+            -D sysusers=false \
+            -D rpmmacrosdir=no \
+            -D homed=disabled \
+            -D userdb=false \
+            -D mode=release \
+            -D pamconfdir=no \
+            -D dev-kvm-mode=0660 \
+            -D nobody-group=nogroup \
+            -D sysupdate=disabled \
+            -D ukify=disabled \
+            ../
+ninja -j$(nproc)
+DESTDIR="$ROOT/容器" ninja install
+
+cd "$ROOT"
+ln --symbolic --force --relative --no-dereference 容器/lib 共享
+
+}
