@@ -1,0 +1,19 @@
+#!/bin/env zsh
+
+软件名称=dws
+软件版本=1.0.64
+
+资源链接[dws.tar.gz]=https://github.com/DingTalk-Real-AI/dingtalk-workspace-cli/releases/download/v1.0.64/dws-linux-amd64.tar.gz
+运行列表=(dws)
+运行路径[dws]=软件/dws
+
+配置部署() {
+
+进入 "${软件目录}"
+创建目录 数据
+创建目录 软件
+
+进入 "${软件目录}/临时"
+tar --extract --file dws.tar.gz --directory "${软件目录}/软件" 
+
+}

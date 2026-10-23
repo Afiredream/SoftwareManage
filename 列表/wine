@@ -1,0 +1,21 @@
+#!/bin/env zsh
+
+软件名称=wine
+
+运行列表=(wine)
+运行路径[wine]=/bin/wine
+
+配置部署() {
+
+进入 "${软件目录}"
+创建目录 配置
+创建目录 数据
+
+进入 "${软件目录}/配置"
+cat > wine << '文本'
+导出 USER="Public"
+导出 WINEDLLOVERRIDES="winemenubuilder.exe=d"
+文本
+
+
+}

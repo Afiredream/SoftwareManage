@@ -1,12 +1,12 @@
 #!/bin/env bash
 
-[ -e "$HOME/软件/软件管理" ] && { echo 目录存在无法安装:$HOME/软件/软件管理; exit; }
-
 mkdir --parents "$HOME/软件"
+[[ -e "$HOME/软件/软件管理" ]] && echo 目录存在无法安装:$HOME/软件/软件管理
+[[ "$(dirname "$0")" != "$HOME/软件/软件管理" ]] && mv --force "$(dirname "$0")" "$HOME/软件/软件管理"
+
 mkdir --parents "$HOME/软件/软件运行"
 mkdir --parents "$HOME/软件/软件仓库"
 mkdir --parents "$HOME/软件/系统配置"
-mv --force "$(dirname "$0")" "$HOME/软件/软件管理"
 
 ln --symbolic --force --relative "$HOME/软件/软件管理/运行/git" "$HOME/软件/软件运行/git"
 ln --symbolic --force --relative "$HOME/软件/软件管理/运行/zsh" "$HOME/软件/软件运行/zsh"
@@ -19,3 +19,10 @@ ln --symbolic --force --relative "$HOME/软件/软件管理/运行/软件更新"
 ln --symbolic --force --relative "$HOME/.local/share/icons" "$HOME/软件/系统配置/icons"
 ln --symbolic --force --relative "$HOME/.config/autostart" "$HOME/软件/系统配置/autostart"
 ln --symbolic --force --relative "$HOME/.local/share/applications" "$HOME/软件/系统配置/applications"
+
+cat > "$HOME/软件/环境变量" << 'TEXT'
+#!/bin/env bash
+FILE="$0"
+ROOT="$(dirname "$FILE")"
+export PATH="$ROOT/软件运行:$PATH"
+TEXT

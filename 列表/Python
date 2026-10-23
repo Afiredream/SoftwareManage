@@ -1,0 +1,27 @@
+#!/bin/env zsh
+
+软件名称=Python
+软件版本=3.9.25
+
+资源链接[Python.zip]=https://github.com/bjia56/portable-python/releases/download/cpython-v3.9.25-build.0/python-full-3.9.25-linux-x86_64.zip
+运行列表=(python)
+运行路径[python]=容器/bin/python
+
+配置部署() {
+
+进入 "${软件目录}"
+删除 容器
+创建目录 配置
+创建目录 模块
+
+进入 "${软件目录}/临时"
+unzip -oq Python.zip
+移动 python-* "${软件目录}/容器"
+
+进入 "${软件目录}/配置"
+cat > python << '文本'
+导出 PYTHONDONTWRITEBYTECODE=$否
+导出 PYTHONPATH="${目录}/模块:$PYTHONPATH"
+文本
+
+}

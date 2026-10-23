@@ -1,20 +1,19 @@
-#!/bin/ksh
+#!/bin/env zsh
 
 软件名称=patchelf
 软件版本=0.19.1
 
-typeset -A 资源链接
-资源链接[patchelf.tar.gz]=https://github.com/NixOS/patchelf/releases/download/0.19.1/patchelf-0.19.1-x86_64.tar.gz
-终端命令=(patchelf)
-typeset -A 运行路径
+运行列表=(patchelf)
 运行路径[patchelf]=容器/bin/patchelf
+资源链接[patchelf.tar.gz]=https://github.com/NixOS/patchelf/releases/download/0.19.1/patchelf-0.19.1-x86_64.tar.gz
+
 
 配置部署() {
 
-cd "$ROOT"
-mkdir --parents 容器
+进入 "${软件目录}"
+创建目录 容器
 
-cd "$ROOT/临时"
-tar --extract --file patchelf.tar.gz --directory "$ROOT/容器"
+进入 "${软件目录}/临时"
+tar --extract --file patchelf.tar.gz --directory "${软件目录}/容器"
 
 }

@@ -1,0 +1,2 @@
+#!/bin/env zsh
+exec mkdir --parents "$@"

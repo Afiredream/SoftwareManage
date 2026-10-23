@@ -1,0 +1,2 @@
+#!/bin/env zsh
+exec ln --symbolic --force --relative --no-dereference "$@"

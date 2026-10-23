@@ -1,6 +1,0 @@
-#!/bin/env bash
-FILE="$0"
-EXEC="$(dirname "$FILE")"
-ROOT="$(dirname "$EXEC")"
-NAME="$(basename "$FILE")"
-exec "$ROOT/软件/$NAME/运行" "$@"

@@ -1,1 +1,7 @@
-exec
+#!/bin/env bash
+FILE="$(realpath $0)"
+EXEC="$(dirname "$FILE")"
+ROOT="$(dirname "$EXEC")"
+NAME="$(basename "$FILE")"
+export PATH="$ROOT/脚本:$PATH"
+exec "$ROOT/软件/$NAME/运行" "$@"

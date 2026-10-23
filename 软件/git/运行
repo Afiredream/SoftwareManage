@@ -2,5 +2,6 @@
 FILE="$0"
 ROOT="$(dirname "$FILE")"
 export HOME="$ROOT/数据"
-export PATH="$ROOT/软件:$PATH"
-exec "$ROOT/软件/git" "$@"
+export PATH="$ROOT/容器/libexec/git-core:$PATH"
+export CURL_CA_BUNDLE="$ROOT/容器/share/git-minimal/curl-ca-bundle.crt"
+exec "$ROOT/容器/bin/git" "$@"

@@ -1,68 +1,67 @@
-#!/bin/ksh
+#!/bin/env zsh
 
 软件名称=Steam
 软件版本=1.0.0.87-3
 
-typeset -A 资源链接
-资源链接[Steam.AppImage]=https://github.com/ivan-hc/Steam-appimage/releases/download/1.0.0.87-3%402026-09-01_1788260048/Steam-1.0.0.87-3-anylinux-x86_64.AppImage
-终端命令=(steam)
-typeset -A 运行路径
+运行列表=(steam)
 运行路径[steam]=临时/Steam.AppImage
+资源链接[Steam.AppImage]=https://github.com/ivan-hc/Steam-appimage/releases/download/1.0.0.87-3%402026-09-01_1788260048/Steam-1.0.0.87-3-anylinux-x86_64.AppImage
 
 配置部署() {
 
-cd "$ROOT"
-mkdir --parents 数据
-mkdir --parents 配置
+进入 "${软件目录}"
+创建目录 数据
+创建目录 配置
 
-cd "$ROOT/临时"
-chmod +x Steam.AppImage
+进入 "${软件目录}/临时"
+给予运行权限 Steam.AppImage
 
-cd "$ROOT/配置"
-cat > steam << 'OUT'
+进入 "${软件目录}/配置"
+cat > steam << '配置文本'
+#!/bin/env zsh
 
-DATA="${DATA:-$PWD}"
+游戏="${游戏:-$PWD}"
 
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_CONFIG_HOME="$DATA/.config"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_STATE_HOME="$HOME/.local/state"
+导出 XDG_CACHE_HOME="$HOME/.cache"
+导出 XDG_CONFIG_HOME="${游戏}/config"
+导出 XDG_DATA_HOME="$HOME/.local/share"
+导出 XDG_STATE_HOME="$HOME/.local/state"
 
-Steam="$HOME/.steam/steam"
-SteamApps="$Steam/steamapps"
+软件="$HOME/.steam/steam"
+仓库="${软件}/steamapps"
 
-Icons="$XDG_DATA_HOME/icons"
-Applications="$XDG_DATA_HOME/applications"
+图标="$XDG_DATA_HOME/icons"
+运行="$XDG_DATA_HOME/applications"
 
-rm --recursive --force "$Icons"
-rm --recursive --force "$Applications"
+删除 "${图标}"
+删除 "${运行}"
 
-mkdir --parent "$DATA/icons"
-mkdir --parent "$DATA/applications"
-mkdir --parent "$DATA/steamapps"
+创建目录 "${游戏}/steamapps"
+创建目录 "${游戏}/applications"
+创建目录 "${游戏}/icons/hicolor"
 
-ln --symbolic --force --no-dereference "$DATA/icons" "$Icons"
-ln --symbolic --force --no-dereference "$DATA/applications" "$Applications"
+配置符号链接 "${游戏}/icons" "${图标}"
+配置符号链接 "${游戏}/applications" "${运行}"
 
-cat > "$DATA/.desktop" << EOF
+cat > "${游戏}/.desktop" << '文本'
 [Desktop Entry]
 Type=Application
 Exec=steam steam://open/games
+文本
+chmod +x "${游戏}/.desktop"
 
-EOF
-
-cat > "$DATA/.directory" << EOF
+cat > "${游戏}/.directory" << '文本'
 [Desktop Entry]
 Type=Directory
 Icon=./icons/hicolor/scalable/apps/steam_icon_*
-EOF
+文本
 
-cat > "$SteamApps/libraryfolders.vdf" << EOF
+cat > "${仓库}/libraryfolders.vdf" << 文本
 "libraryfolders"
 {
 	"0"
 	{
-		"path"		"$Steam"
+		"path"		"${软件}"
 		"label"		""
 		"contentid"		""
 		"totalsize"		"0"
@@ -74,7 +73,7 @@ cat > "$SteamApps/libraryfolders.vdf" << EOF
 	}
 	"1"
 	{
-		"path"		"$DATA"
+		"path"		"${游戏}"
 		"label"		""
 		"contentid"		""
 		"totalsize"		"0"
@@ -85,21 +84,21 @@ cat > "$SteamApps/libraryfolders.vdf" << EOF
 		}
 	}
 }
-EOF
+文本
 
-Hicolor="$Icons/hicolor"
-Scalable="$Hicolor/scalable"
-if [ ! -d "$Scalable" ]; then
-    [ -e "$Hicolor/16x16" ] && ln --symbolic  --force --no-dereference "16x16" "$Scalable"
-    [ -e "$Hicolor/32x32" ] && ln --symbolic  --force --no-dereference "32x32" "$Scalable"
-    [ -e "$Hicolor/48x48" ] && ln --symbolic  --force --no-dereference "48x48" "$Scalable"
-    [ -e "$Hicolor/64x64" ] && ln --symbolic  --force --no-dereference "64x64" "$Scalable"
-    [ -e "$Hicolor/128x128" ] && ln --symbolic  --force --no-dereference "128x128" "$Scalable"
-    [ -e "$Hicolor/160x160" ] && ln --symbolic  --force --no-dereference "160x160" "$Scalable"
-    [ -e "$Hicolor/256x256" ] && ln --symbolic  --force --no-dereference "256x256" "$Scalable"
-fi
-
-
-OUT
+如果 [[ -d "${游戏}/icons/hicolor" ]]; 那么
+	压栈 "${游戏}/icons/hicolor"
+	如果 [[ ! -d "scalable" ]]; 那么
+		[[ -e "16x16" ]] && 配置符号链接 "16x16" "scalable"
+		[[ -e "32x32" ]] && 配置符号链接 "32x32" "scalable"
+		[[ -e "48x48" ]] && 配置符号链接 "48x48" "scalable"
+		[[ -e "64x64" ]] && 配置符号链接 "64x64" "scalable"
+		[[ -e "128x128" ]] && 配置符号链接 "128x128" "scalable"
+		[[ -e "160x160" ]] && 配置符号链接 "160x160" "scalable"
+		[[ -e "256x256" ]] && 配置符号链接 "256x256" "scalable"
+	结束
+    弹栈
+结束
+配置文本
 
 }

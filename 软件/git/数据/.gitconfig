@@ -1,0 +1,25 @@
+[user]
+	name = Afiredream
+	email = afiredream@qq.com
+[init]
+	defaultBranch = main
+[color]
+	ui = auto
+[core]
+	filemode = false
+	ignorecase = false
+	autocrlf = input
+[pull]
+	rebase = false
+[push]
+	default = current
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[http]
+	proxy = http://127.0.0.1:7897
+	sslVerify = false
+[https]
+	proxy = http://127.0.0.1:7897

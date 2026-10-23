@@ -1,0 +1,2 @@
+#!/bin/env zsh
+exec rmdir --ignore-fail-on-non-empty "$@"
