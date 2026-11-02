@@ -1,0 +1,251 @@
+#!/bin/env python3
+"""把 列表/ 下的软件条目统一为「新约定」。
+
+用法:
+  约定转换            转换 列表/ 下所有条目
+  约定转换 检查       只报告哪些条目尚未符合新约定（不修改）
+  约定转换 文件...    只处理指定文件
+
+新约定（与 运行/软件装载、运行/软件更新 的真实读法一致）:
+  1. 运行列表=()      取代 终端命令=()
+     软件装载 只读 运行列表 去建 软件运行 链接；终端命令 全仓库无人读取。
+  2. 运行路径[名称]=  配合 运行列表=(名称)
+  3. 如果 / 那么 / 否则 / 结束        取代 if / then / else / fi
+  4. 如果 / 或者 / 那么 / 结束        取代 if / elif / then / fi
+  5. 进入 / 创建目录 / 给予运行权限 / 删除 / 复制文件 / 复制目录 / 移动 / 配置符号链接 / 相对符号链接
+     取代 cd / mkdir / chmod / rm / cp / mv / ln
+
+条目文件是被 导入(source) 进 zsh 的，shebang 不生效，但语义必须按 zsh 写：
+去掉 ksh 的 typeset -A 与 "env ksh" / "ksh" 前缀，并预先声明变量 —— 否则
+zsh 会把未声明的 资源链接[x]=... 当作整数下标，$(( )) 形式又把汉字键当变量名
+展开成空串，最终所有键都被吃掉。
+"""
+
+import os
+import re
+import sys
+
+脚本目录 = os.path.dirname(os.path.realpath(__file__))
+根目录 = os.path.dirname(脚本目录)
+列表目录 = os.path.join(根目录, "列表")
+
+# 需要预先声明的变量（只在条目里真的用到时声明）。
+声明顺序 = [
+    "软件名称", "软件版本", "运行方式", "终端方式",
+    "运行列表", "部署依赖", "动态链接", "资源链接", "运行路径",
+]
+
+# 函数体里改写的命令：只在「行首或 ; & | ( ` { 之后」匹配，
+# 避开字符串中间、以及 heredoc 起的文本。
+命令表 = [
+    (r'(?P<前>^|(?<=[;&|(`{])[ \t]*)mkdir[ \t]+(?:--parents|-p)\b[ \t]*', '创建目录 '),
+    (r'(?P<前>^|(?<=[;&|(`{])[ \t]*)ln[ \t]+--symbolic[ \t]+--force[ \t]+--relative[ \t]+--no-dereference\b[ \t]*', '相对符号链接 '),
+    (r'(?P<前>^|(?<=[;&|(`{])[ \t]*)ln[ \t]+--symbolic[ \t]+--force[ \t]+--no-dereference\b[ \t]*', '配置符号链接 '),
+    (r'(?P<前>^|(?<=[;&|(`{])[ \t]*)rm[ \t]+--recursive[ \t]+--force\b[ \t]*', '删除 '),
+    (r'(?P<前>^|(?<=[;&|(`{])[ \t]*)rm[ \t]+-r[f]?\b[ \t]*', '删除 '),
+    (r'(?P<前>^|(?<=[;&|(`{])[ \t]*)cp[ \t]+--recursive[ \t]+--force\b[ \t]*', '复制目录 '),
+    (r'(?P<前>^|(?<=[;&|(`{])[ \t]*)cp[ \t]+--force\b[ \t]*', '复制文件 '),
+    (r'(?P<前>^|(?<=[;&|(`{])[ \t]*)mv[ \t]+--force\b[ \t]*', '移动 '),
+    (r'(?P<前>^|(?<=[;&|(`{])[ \t]*)chmod[ \t]+\+x\b[ \t]*', '给予运行权限 '),
+]
+命令正则 = [(re.compile(r, re.M), 新) for r, 新 in 命令表]
+
+进入正则 = re.compile(r'(?P<前>^|(?<=[;&|(`{])[ \t]*)cd[ \t]+"\$\{ROOT\}"[ \t]*(?=$|;|})', re.M)
+
+赋值正则 = re.compile(r'^\s*([^\s#=][^=\s]*?)(\[[^\]]*\])?\s*=')
+heredoc正则 = re.compile(r'(?<!\<)<<-?\s*(["\']?)([A-Za-z_][A-Za-z0-9_]*)\1')
+
+
+def 去ksh前缀(行):
+    if 'env ksh ' in 行:
+        行 = 行.replace('env ksh ', '')
+    行 = re.sub(r'(?<![A-Za-z0-9_])ksh[ \t]+', '', 行, count=1)
+    return 行
+
+
+def 改写行(行, 在函数):
+    """对一行做约定改写。返回 (新行, 是否命中)。"""
+    原 = 行
+    命中 = False
+
+    # 终端命令= -> 运行列表=
+    if re.match(r'^\s*终端命令=', 行):
+        行 = re.sub(r'^(\s*)终端命令=', r'\1运行列表=', 行)
+        命中 = True
+
+    # cd "$ROOT" -> 进入 "${软件目录}"（只在函数体里）
+    if 在函数:
+        新, n = 进入正则.subn(lambda m: m.group('前') + '进入 "${软件目录}"', 行)
+        if n:
+            行, 命中 = 新, True
+        for 正则, 替换 in 命令正则:
+            新, n = 正则.subn(lambda m: m.group('前') + 替换, 行)
+            if n:
+                行, 命中 = 新, True
+    return 行, (命中 and 行 != 原)
+
+
+def 扫描状态(行):
+    """返回该行结束时是否仍在 heredoc / 未闭合引号中。"""
+    return None
+
+
+def 处理文件(路径, 写回):
+    文本 = open(路径, encoding='utf-8').read()
+    行列表 = 文本.split('\n')
+
+    # ---- 第一遍：收集条目级赋值里出现过的变量名 ----
+    已见 = set()
+    在函数 = False
+    定界符 = None
+    for 行 in 行列表:
+        去尾 = 行.rstrip('\r')
+        if 定界符 is not None:
+            if 去尾.strip() == 定界符:
+                定界符 = None
+            continue
+        if not 在函数:
+            m = 赋值正则.match(去尾)
+            if m and not 去尾.lstrip().startswith('#'):
+                已见.add(m.group(1).strip())
+        if re.match(r'^\s*配置部署\s*\(\)\s*\{', 去尾):
+            在函数 = True
+            continue
+        if 在函数 and re.match(r'^\}', 去尾):
+            在函数 = False
+        命中组 = heredoc正则.search(去尾)
+        if 命中组 and '<<<' not in 去尾:
+            定界符 = 命中组.group(2)
+
+    # ---- 第二遍：逐行改写 ----
+    输出 = []
+    在函数 = False
+    定界符 = None
+    单引 = 双引 = False
+    改动 = False
+    i = 0
+    for 行 in 行列表:
+        i += 1
+        去尾 = 行
+
+        # heredoc 内容原样保留
+        if 定界符 is not None:
+            输出.append(行)
+            if 行.strip() == 定界符:
+                定界符 = None
+            continue
+
+        # shebang
+        if i == 1 and 行.startswith('#!'):
+            输出.append('#!/bin/env zsh')
+            改动 = 改动 or 行 != '#!/bin/env zsh'
+            continue
+
+        # 函数边界
+        if re.match(r'^\s*配置部署\s*\(\)\s*\{', 行):
+            在函数 = True
+            输出.append(行)
+            continue
+        if 在函数 and re.match(r'^\}', 行):
+            在函数 = False
+            输出.append(行)
+            continue
+
+        # typeset -A 资源链接 / 运行路径：由文件头统一声明，删掉
+        if re.match(r'^\s*typeset\s+-A\s+(资源链接|运行路径)\s*$', 行):
+            改动 = True
+            输出.append('')
+            continue
+
+        新行 = 去ksh前缀(行) if ('env ksh ' in 行 or re.search(r'(?<![A-Za-z0-9_])ksh[ \t]', 行)) else 行
+        if 新行 != 行:
+            改动 = True
+
+        改后, 命中 = 改写行(新行, 在函数)
+        if 命中:
+            改动 = True
+        输出.append(改后)
+
+        # 更新引号状态与 heredoc（不被引号包裹时才算 heredoc）
+        if not 双引 and not 单引:
+            命中组 = heredoc正则.search(改后)
+            if 命中组 and '<<<' not in 改后:
+                定界符 = 命中组.group(2)
+        # 简化引号计数
+        片段 = 改后
+        片段 = re.sub(r'\\[\\"\']', '', 片段)
+        片段 = re.sub(r"'[^']*'", '', 片段)
+        片段 = re.sub(r'"[^"]*"', '', 片段)
+        单引 = (片段.count("'") % 2 == 1)
+        双引 = (片段.count('"') % 2 == 1)
+
+    # 压缩因删除 typeset 产生的连续空行
+    while '\n\n\n' in '\n'.join(输出):
+        j = '\n'.join(输出)
+        j = j.replace('\n\n\n', '\n\n')
+        输出 = j.split('\n')
+
+    # ---- 插入预先声明块 ----
+    结果 = '\n'.join(输出)
+    声明 = [n for n in 声明顺序 if n in 已见]
+    块 = ['typeset ' + ' '.join(声明)] if 声明 else []
+    块.append('typeset -A 资源链接')
+    块.append('typeset -A 运行路径')
+    块文本 = '\n'.join(块) + '\n\n'
+
+    # 声明块放在 shebang 之后、第一个赋值之前
+    行列表2 = 结果.split('\n')
+    if 行列表2 and 行列表2[0].startswith('#!'):
+        新文本 = 行列表2[0] + '\n\n' + 块文本 + '\n'.join(行列表2[1:]).lstrip('\n')
+    else:
+        新文本 = 块文本 + 结果.lstrip('\n')
+    新文本 = re.sub(r'\n{3,}', '\n\n', 新文本)
+
+    return 新文本, 改动
+
+
+def 检查文件(路径):
+    新, 改动 = 处理文件(路径, False)
+    原文 = open(路径, encoding='utf-8').read()
+    return 新 != 原文
+
+
+def 主(argv):
+    模式 = argv[1] if len(argv) > 1 else '转换'
+    if 模式 in ('转换', '检查'):
+        文件 = []
+        for 根, 子目录, 名字 in os.walk(列表目录):
+            for n in 名字:
+                完整 = os.path.join(根, n)
+                if os.path.isfile(完整) and os.path.basename(完整) != '#':
+                    文件.append(完整)
+        文件.sort()
+        实际模式 = 模式
+    else:
+        文件 = [os.path.abspath(p) for p in argv[1:]]
+        实际模式 = '转换'
+
+    待改 = []
+    for f in 文件:
+        try:
+            if 检查文件(f):
+                待改.append(f)
+        except Exception as e:
+            print(f'读取失败 {f}: {e}', file=sys.stderr)
+
+    if 实际模式 == '检查':
+        for f in 待改:
+            print(os.path.relpath(f, 根目录))
+        print(f'\n共 {len(文件)} 个条目，{len(待改)} 个待转换', file=sys.stderr)
+        return 0
+
+    for f in 待改:
+        新, _ = 处理文件(f, True)
+        open(f, 'w', encoding='utf-8').write(新)
+        print(f'已转换 {os.path.relpath(f, 根目录)}')
+    print(f'\n共 {len(文件)} 个条目，转换 {len(待改)} 个', file=sys.stderr)
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(主(sys.argv))

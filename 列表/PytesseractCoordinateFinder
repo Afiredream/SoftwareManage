@@ -1,0 +1,28 @@
+#!/bin/env zsh
+
+软件名称=PytesseractCoordinateFinder
+
+运行方式=python
+运行列表=(TextFinder)
+运行路径[TextFinder]=代码/text_finder.py
+
+配置部署() {
+
+进入 "${软件目录}"
+创建目录 代码
+创建目录 配置
+
+进入 "${软件目录}/代码"
+同步仓库 https://github.com/bobbybotbop/pytesseract-coordinate-finder.git
+[[ -e venv ]] && python -m venv venv
+source ./venv/bin/activate
+pip install --upgrade pip
+pip install pytesseract Pillow pyautogui pygetwindow
+
+进入 "${软件目录}/配置"
+cat > TextFinder << '文本'
+source ${目录}/代码/venv/bin/activate
+文本
+
+
+}

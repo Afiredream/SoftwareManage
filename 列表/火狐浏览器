@@ -2,34 +2,34 @@
 
 软件名称=火狐浏览器
 
-运行列表s=(firefox)
+运行列表=(firefox)
 运行路径[firefox]=软件/firefox
-资源链接[firefox.tar.xz]=https://download-installer.cdn.mozilla.net/pub/firefox/nightly/latest-mozilla-central-l10n/firefox-158.0a1.zh-CN.linux-x86_64.tar.xz
+资源链接[火狐浏览器.tar.xz]=https://download-installer.cdn.mozilla.net/pub/firefox/nightly/latest-mozilla-central-l10n/firefox-161.0a1.zh-CN.linux-x86_64.tar.xz
 
 配置部署() {
 
-进入 "${软件目录}"
-创建目录 配置
-创建目录 数据
-删除目录 容器
+cd -- "${软件目录}" || return 1
+command mkdir --parents -- 配置 数据
+command rm --recursive --force -- 容器
 
-进入 "${软件目录}/临时"
-tar --extract --file firefox.tar.xz --directory .
-[[ -d "$ROOT/软件" ]] || cp --recursive --force --no-target-directory firefox "$ROOT/软件"
-cp --force "$ROOT/软件/browser/chrome/icons/default/default128.png" "$ROOT/系统/icons/${软件名称}.png"
-rm --recursive --force firefox
+cd -- "${软件目录}/临时" || return 1
+tar --extract --file 火狐浏览器.tar.xz --directory .
+[[ -d "${软件目录}/软件" ]] || command cp --recursive --force --no-target-directory firefox "${软件目录}/软件"
+command mkdir --parents -- "${软件目录}/系统/icons"
+command cp --force -- "${软件目录}/软件/browser/chrome/icons/default/default128.png" "${软件目录}/系统/icons/${软件名称}.png"
+command rm --recursive --force -- firefox
 
-进入 "${软件目录}/配置"
+cd -- "${软件目录}/配置" || return 1
 cat > firefox <<'EOF'
-数据=$(eval 回显 ~$USER)
-导出 XDG_CACHE_HOME="$Home/.cache"
-导出 XDG_CONFIG_HOME="$Home/.config"
-导出 XDG_DATA_HOME="$Home/.local/share"
-导出 XDG_STATE_HOME="$Home/.local/state"
-设置 -- "$@" -P Profile
+Home=$(eval echo ~$USER)
+export XDG_CACHE_HOME="$Home/.cache"
+export XDG_CONFIG_HOME="$Home/.config"
+export XDG_DATA_HOME="$Home/.local/share"
+export XDG_STATE_HOME="$Home/.local/state"
+set -- "$@" -P Profile
 EOF
 
-进入 "${软件目录}/系统"
+cd -- "${软件目录}/系统" || return 1
 cat > autostart/firefox.desktop << TEXT
 [Desktop Entry]
 Type=Application

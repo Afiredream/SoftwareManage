@@ -1,0 +1,89 @@
+#!/bin/ksh
+
+软件名称=Node
+
+终端命令=(nvm node npm nrm npx pnpm pnpx)
+
+配置部署() {
+
+cd "$ROOT"
+mkdir --parents 代码
+mkdir --parents 配置
+mkdir --parents 数据
+
+cd "$ROOT/代码"
+同步仓库 https://github.com/nvm-sh/nvm.git
+
+cd "$ROOT/运行"
+touch nvm
+chmod +x nvm
+cat > nvm << 'TEXT'
+#!/bin/env bash
+FILE="$(realpath "$0")"
+ROOT="$(dirname "$FILE")"
+ROOT="$(dirname "$ROOT")"
+NAME="$(basename "$FILE")"
+export HOME="$ROOT/数据"
+export NVM_DIR="$HOME"
+. "$ROOT/代码/nvm.sh"
+export NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
+nvm "$@"
+TEXT
+touch node
+chmod +x node
+cat > node << 'TEXT'
+#!/bin/env dash
+FILE="$(realpath "$0")"
+ROOT="$(dirname "$FILE")"
+ROOT="$(dirname "$ROOT")"
+NAME="$(basename "$FILE")"
+[ -z $NodeVersion ] && exec "$ROOT/数据/node/bin/$NAME" "$@"
+exec "$ROOT/数据/versions/node/v$NodeVersion/bin/$NAME" "$@"
+TEXT
+touch npm
+chmod +x npm
+cat > npm << 'TEXT'
+#!/bin/env dash
+NAME="$(basename "$0")"
+FILE="$(realpath "$0")"
+ROOT="$(dirname "$FILE")"
+ROOT="$(dirname "$ROOT")"
+export HOME="$ROOT/数据"
+[ -z $NodeVersion ] && exec "$ROOT/数据/node/bin/$NAME" "$@"
+exec "$ROOT/数据/versions/node/v$NodeVersion/bin/$NAME" "$@"
+TEXT
+touch pnpm
+chmod +x pnpm
+cat > pnpm << 'TEXT'
+#!/bin/env dash
+NAME="$(basename "$0")"
+FILE="$(realpath "$0")"
+ROOT="$(dirname "$FILE")"
+ROOT="$(dirname "$ROOT")"
+export HOME="$ROOT/数据"
+export PNPM_CONFIG_PM_ON_FAIL=ignore
+[ -z $NodeVersion ] && exec "$ROOT/数据/node/bin/$NAME" "$@"
+exec "$ROOT/数据/versions/node/v$NodeVersion/bin/$NAME" "$@"
+TEXT
+touch npx
+chmod +x npx
+cat > npx << 'TEXT'
+#!/bin/env dash
+FILE="$(realpath "$0")"
+ROOT="$(dirname "$FILE")"
+ROOT="$(dirname "$ROOT")"
+NAME="$(basename "$FILE")"
+[ -z $NodeVersion ] && exec "$ROOT/数据/node/bin/$NAME" "$@"
+exec "$ROOT/数据/versions/node/v$NodeVersion/bin/$NAME" "$@"
+TEXT
+ln --symbolic --force npm nrm
+ln --symbolic --force npm pnpx
+
+
+cd "$ROOT/数据"
+ln --symbolic --force --no-dereference versions/node/$("$ROOT/运行/nvm" version node)  node
+
+cd "$ROOT"
+"$ROOT/运行/nvm" install node
+
+}

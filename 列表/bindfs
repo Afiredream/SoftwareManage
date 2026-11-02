@@ -1,0 +1,29 @@
+#!/bin/env zsh
+
+软件名称=bindfs
+软件版本=1.18.4
+
+资源链接[bindfs.tar.gz]=https://bindfs.org/downloads/bindfs-1.18.4.tar.gz
+运行列表=(bindfs)
+运行路径[bindfs]=容器/bin/bindfs
+
+配置部署() {
+
+进入 "${软件目录}"
+创建目录 数据
+创建目录 容器
+删除 代码
+
+进入 "${软件目录}/临时"
+tar --extract --file bindfs.tar.gz --directory .
+移动 bindfs-${软件版本} "${软件目录}/代码"
+
+进入 "${软件目录}/代码"
+./configure --prefix /
+make --jobs=$(nproc)
+make install DESTDIR="${软件目录}/容器"
+
+进入 "${软件目录}"
+删除 代码
+
+}

@@ -1,0 +1,18 @@
+#!/bin/env zsh
+
+软件名称=lflfuse
+软件版本=2024.05.12
+
+资源链接[lklfuse]=https://github.com/ading2210/lklfuse-static/releases/download/2024.05.12/lklfuse
+运行列表=(lklfuse)
+运行路径[lklfuse]=临时/lklfuse
+
+配置部署() {
+
+进入 "${软件目录}"
+创建目录 数据
+
+进入 "${软件目录}/临时"
+chmod +x lklfuse
+
+}
